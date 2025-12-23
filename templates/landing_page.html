@@ -1,0 +1,124 @@
+<!-- landing_page.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Snowfriend - A gentle space for your thoughts. A calm, private companion for reflection and mental wellness.">
+    <title>Snowfriend - A Gentle Space for Your Thoughts</title>
+    <link rel="stylesheet" href="{% static 'css/landing.css' %}">
+    <script src="{% static 'js/landing.js' %}" defer></script>
+    <link rel="icon" href="{% static 'images/snowflake_favicon.png' %}">
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="{% static 'images/snowfriend_logo.png' %}" alt="Snowfriend logo" class="logo-icon">
+                <span class="logo-text">Snowfriend</span>
+            </div>
+            <nav class="nav">
+                <a href="{% url 'login' %}" class="nav-link">Login</a>
+                <a href="{% url 'register' %}" class="nav-button">Get Started</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-container">
+                <div class="hero-content">
+                    <h1 class="hero-title">A Gentle Space for Your Thoughts</h1>
+                    <p class="hero-description">
+                        Snowfriend is a calm, private companion designed to help you reflect,
+                        organize your thoughts, and find moments of clarity in your day.
+                    </p>
+                    <div class="hero-actions">
+                        <a href="{% url 'register' %}" class="button-primary">Start Your Journey</a>
+                        <p class="hero-secondary">
+                            Already have an account? <a href="{% url 'login' %}" class="link">Sign in here</a>
+                        </p>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="{% static 'images/snowfriend_logo.png' %}" alt="Snowfriend illustration"
+                        class="illustration">
+                </div>
+            </div>
+        </section>
+
+        <section class="trust">
+            <div class="trust-container">
+                <h2 class="trust-heading">Designed With Your Comfort in Mind</h2>
+                <p class="trust-description">
+                    Every element of Snowfriend is thoughtfully crafted to create a sense of safety,
+                    simplicity, and respect for your personal space.
+                </p>
+                <div class="features">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="16" cy="16" r="12" stroke="currentColor" stroke-width="2" fill="none" />
+                                <path d="M16 10V16L20 18" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" />
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">Calm Design</h3>
+                        <p class="feature-text">
+                            A visual experience built to reduce cognitive load and create a peaceful environment for
+                            reflection.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect x="8" y="10" width="16" height="14" rx="2" stroke="currentColor" stroke-width="2"
+                                    fill="none" />
+                                <path d="M12 10V8C12 5.79086 13.7909 4 16 4C18.2091 4 20 5.79086 20 8V10"
+                                    stroke="currentColor" stroke-width="2" />
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">Privacy First</h3>
+                        <p class="feature-text">
+                            Your thoughts are yours alone. We prioritize security and confidentiality in every
+                            interaction.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16 4L18 12L26 14L18 16L16 24L14 16L6 14L14 12L16 4Z" stroke="currentColor"
+                                    stroke-width="2" fill="none" />
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">Thoughtful Simplicity</h3>
+                        <p class="feature-text">
+                            Clean interfaces and clear pathways help you focus on what matters without unnecessary
+                            complexity.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <p class="footer-text">Snowfriend © 2025</p>
+            <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Contact</a>
+        </div>
+        </div>
+    </footer>
+</body>
+
+</html>

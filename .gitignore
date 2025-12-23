@@ -1,0 +1,25 @@
+# Python & Django internals
+*.pyc
+__pycache__/
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Environment & Virtual Env
+# This matches your (venv) folder name
+venv/
+env/
+.env
+
+# User Media
+# (Prevents uploading test images you upload during development)
+media/
+
+# Static collection
+# (This folder is generated when you run collectstatic for deployment)
+staticfiles/
+
+# IDE/Editor settings (Optional but recommended)
+.vscode/
+.idea/

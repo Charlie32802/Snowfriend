@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create your Snowfriend account - A gentle space for your thoughts.">
+    <title>Snowfriend — Register</title>
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    <script src="{% static 'js/auth.js' %}" defer></script>
+    <link rel="icon" href="{% static 'images/snowflake_favicon.png' %}">
+</head>
+
+<body>
+     <!-- Django Messages -->
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="message message-{{ message.tags }}">
+            <span class="message-text">{{ message }}</span>
+            <button class="message-close" aria-label="Close message">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="{% static 'images/snowfriend_logo.png' %}" alt="Snowfriend logo" class="logo-icon">
+                <span class="logo-text">Snowfriend</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="auth-main">
+        <div class="auth-container">
+            <div class="auth-card">
+                <!-- Home Icon - Inside the card -->
+                <div class="home-icon-container">
+                    <a href="{% url 'landing' %}" class="home-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24">
+                            <path d="M12,2.1L1,12h3v9h7v-6h2v6h7v-9h3L12,2.1z M18,19h-3v-6H9v6H6v-8.8l6-5.4l6,5.4V19z">
+                            </path>
+                        </svg>
+                        <span class="tooltip">Go Home</span>
+                    </a>
+                </div>
+
+                <h1 class="auth-title">Start Your Journey</h1>
+                <p class="auth-subtitle">Create your account to begin</p>
+
+                <form method="post" class="auth-form" id="registerForm" novalidate>
+                    {% csrf_token %}
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fullname" class="form-label">Full Name</label>
+                            <input type="text" id="fullname" name="fullname" class="form-input" required
+                                autocomplete="name">
+                            <span class="form-error" id="fullnameError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" id="email" name="email" class="form-input" required
+                                autocomplete="email">
+                            <span class="form-error" id="emailError"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="password-wrapper">
+                                <input type="password" id="password" name="password" class="form-input" required
+                                    autocomplete="new-password">
+                                <button type="button" class="password-toggle" aria-label="Toggle password visibility">
+                                    <svg class="eye-open" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M10 4C5.5 4 2 7 1 10C2 13 5.5 16 10 16C14.5 16 18 13 19 10C18 7 14.5 4 10 4Z"
+                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                        <circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.5" />
+                                    </svg>
+                                    <svg class="eye-closed" style="display: none;" width="20" height="20"
+                                        viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M10 4C5.5 4 2 7 1 10C2 13 5.5 16 10 16C14.5 16 18 13 19 10C18 7 14.5 4 10 4Z"
+                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                        <circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.5" />
+                                        <line x1="3" y1="3" x2="17" y2="17" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <span class="form-error" id="passwordError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <div class="password-wrapper">
+                                <input type="password" id="confirmPassword" name="confirmPassword" class="form-input"
+                                    required autocomplete="new-password">
+                                <button type="button" class="password-toggle" aria-label="Toggle password visibility">
+                                    <svg class="eye-open" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M10 4C5.5 4 2 7 1 10C2 13 5.5 16 10 16C14.5 16 18 13 19 10C18 7 14.5 4 10 4Z"
+                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                        <circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.5" />
+                                    </svg>
+                                    <svg class="eye-closed" style="display: none;" width="20" height="20"
+                                        viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M10 4C5.5 4 2 7 1 10C2 13 5.5 16 10 16C14.5 16 18 13 19 10C18 7 14.5 4 10 4Z"
+                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                        <circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.5" />
+                                        <line x1="3" y1="3" x2="17" y2="17" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <span class="form-error" id="confirmPasswordError"></span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="button-primary" id="registerButton">
+    <span class="button-text">Create Account</span>
+    <img src="{% static 'images/snowflake_loading_logo.png' %}" alt="Loading" class="button-loader">
+</button>
+
+                    <p class="privacy-text">Your information is private and secure.</p>
+                </form>
+
+                <div class="auth-footer">
+                    <p class="auth-footer-text">
+                        Already have an account? <a href="{% url 'login' %}" class="link">Sign In</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <p class="footer-text">Snowfriend © 2025</p>
+            <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Contact</a>
+        </div>
+        </div>
+    </footer>
+</body>
+
+</html>

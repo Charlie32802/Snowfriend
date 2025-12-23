@@ -1,0 +1,10 @@
+Problems needed to be solve:
+
+1. Snowfriend must respond basd on the context of the user's message, like if the user's message is typing "Hello", make it
+understand that context and then find the most perfect and appropriate response.
+
+2. Snowfriend must not be repetitive, just in case if something happens, all automatic messages should have 20 unique and
+paraphrased responses each, to ensure that the user doesn't see a robotic companion repetitively iterating the same message over
+and over again.
+
+3. Add an "Export" button for Snowfriend to export all conversations between the User and Snowfriend.

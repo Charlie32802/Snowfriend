@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Snowfriend Dashboard - Your calm space for reflection.">
+    <title>Snowfriend — Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <script src="{% static 'js/dashboard.js' %}" defer></script>
+    <link rel="icon" href="{% static 'images/snowflake_favicon.png' %}">
+</head>
+
+<body>
+    <!-- Django Messages -->
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="message message-{{ message.tags }}">
+            <span class="message-text">{{ message }}</span>
+            <button class="message-close" aria-label="Close message">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="{% static 'images/snowfriend_logo.png' %}" alt="Snowfriend logo" class="logo-icon">
+                <span class="logo-text">Snowfriend</span>
+            </div>
+            <a href="{% url 'logout' %}" class="logout-button">Logout</a>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="content-container">
+            <div class="welcome-section">
+                <h1 class="welcome-title">Welcome back.</h1>
+                <p class="welcome-subtitle">You're in a calm, private space.</p>
+            </div>
+
+            <div class="orientation-section">
+                <p class="orientation-text">
+                    Snowfriend is here to help you reflect and organize your thoughts at your own pace.
+                </p>
+            </div>
+
+            <div class="action-section">
+                <button class="button-primary" id="startConversation">Start a Conversation</button>
+                <p class="secondary-text">You're always in control of the conversation.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <p class="footer-text">Snowfriend © 2025</p>
+        </div>
+    </footer>
+</body>
+
+</html>
