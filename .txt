@@ -1,10 +1,7 @@
 Problems needed to be solve:
 
-1. Snowfriend must respond basd on the context of the user's message, like if the user's message is typing "Hello", make it
-understand that context and then find the most perfect and appropriate response.
+1. Maintain Deepseek V3 api with credit balance (future enhancement)
 
-2. Snowfriend must not be repetitive, just in case if something happens, all automatic messages should have 20 unique and
-paraphrased responses each, to ensure that the user doesn't see a robotic companion repetitively iterating the same message over
-and over again.
+2. UI/UX design in chat page to identify how many messages the users can send before they can chat again tomorrow (in progress)
 
-3. Add an "Export" button for Snowfriend to export all conversations between the User and Snowfriend.
+3. Finish the Privacy Policy and Terms of Service (planned)

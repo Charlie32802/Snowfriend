@@ -19,6 +19,14 @@
                 <img src="{% static 'images/snowfriend_logo.png' %}" alt="Snowfriend logo" class="logo-icon">
                 <span class="logo-text">Snowfriend</span>
             </div>
+            <!-- Countdown Timer -->
+            <div class="countdown-timer" id="countdownTimer" style="display: none; opacity: 0;">
+    <svg class="timer-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+        <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span class="timer-text" id="timerText"></span>
+</div>
             <div class="header-actions">
                 <a href="{% url 'dashboard' %}" class="home-button" id="homeButton">
                     <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24">
@@ -35,48 +43,56 @@
     <main class="main">
         <div class="chat-container" id="chatContainer">
             <div class="messages" id="messagesContainer">
-                <!-- Initial message will be added by JavaScript with user's name -->
+                <!-- Messages will be added by JavaScript -->
             </div>
         </div>
 
-        <div class="input-container">
-            <div class="input-controls">
-                <!-- Clear button (left side) -->
-                <button id="clearButton" class="clear-button" aria-label="Clear conversation">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M3 6h18M8 6V4c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2v2m3 0v14c0 1.1-.9 2-2 2H7c-1.1 0-2-.9-2-2V6h14z"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" />
-                    </svg>
-                    <span class="clear-tooltip">Clear Conversation</span>
-                </button>
+<div class="input-container">
+    <div class="input-wrapper-container">
+        <!-- Message input controls -->
+        <div class="input-controls">
+            <!-- Clear button -->
+            <button id="clearButton" class="clear-button" aria-label="Clear conversation">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 6h18M8 6V4c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2v2m3 0v14c0 1.1-.9 2-2 2H7c-1.1 0-2-.9-2-2V6h14z"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+                <span class="clear-tooltip">Clear Conversation</span>
+            </button>
 
-                <!-- Export button (right side) -->
-                <button id="exportButton" class="export-button" aria-label="Export conversation">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M4 16L4 17C4 18.6569 5.34315 20 7 20L17 20C18.6569 20 20 18.6569 20 17L20 16"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M16 12L12 8L8 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" />
-                        <path d="M12 4L12 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" />
+            <!-- Text input area -->
+            <div class="input-wrapper">
+                <textarea id="messageInput" class="message-input" placeholder="Type what's on your mind…" rows="1"
+                    maxlength="2000"></textarea>
+                <button id="sendButton" class="send-button" disabled aria-label="Send message">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 10L18 2L10 18L9 11L2 10Z" fill="currentColor" />
                     </svg>
-                    <span class="export-tooltip">Export Conversation</span>
                 </button>
-
-                <!-- Text input area -->
-                <div class="input-wrapper">
-                    <textarea id="messageInput" class="message-input" placeholder="Type what's on your mind…" rows="1"
-                        maxlength="2000"></textarea>
-                    <button id="sendButton" class="send-button" disabled aria-label="Send message">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M2 10L18 2L10 18L9 11L2 10Z" fill="currentColor" />
-                        </svg>
-                    </button>
-                </div>
             </div>
+
+            <!-- Export button -->
+            <button id="exportButton" class="export-button" aria-label="Export conversation">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 16L4 17C4 18.6569 5.34315 20 7 20L17 20C18.6569 20 20 18.6569 20 17L20 16"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M16 12L12 8L8 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <path d="M12 4L12 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+                <span class="export-tooltip">Export Conversation</span>
+            </button>
+
+            <!-- ✅ UPDATED: Message counter (20 → 15) -->
+            <div class="message-counter" id="messageCounter">
+                <span class="counter-text">Messages left: <strong id="messagesLeft">15</strong></span>
+            </div>
+        </div>
+
+        <div class="disclaimer-row">
             <p class="disclaimer">
                 ⚠️ <strong>Important:</strong> Snowfriend is an AI companion, not a licensed therapist or crisis
                 counselor.
@@ -86,14 +102,19 @@
                 </a>
             </p>
         </div>
+
+        <div class="footer-row">
+            <p class="footer-text">Snowfriend © 2025</p>
+        </div>
+    </div>
+</div>
     </main>
 
     <!-- Clear Conversation Modal -->
     <div class="modal-overlay" id="clearModal">
         <div class="modal-content">
-            <h2 class="modal-title">Delete All Conversations?</h2>
-            <p class="modal-text">This will permanently delete all your conversations and messages from our database.
-            </p>
+            <h2 class="modal-title">Delete Conversations?</h2>
+            <p class="modal-text">Choose how you want to clear your data:</p>
 
             <div class="modal-privacy-box">
                 <div class="modal-privacy-item">
@@ -101,32 +122,64 @@
                         <path d="M13.5 4.5L6 12L2.5 8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                             stroke-linejoin="round" />
                     </svg>
-                    <span>Your data will be completely removed</span>
+                    <span><strong>Delete Conversations:</strong> Removes all messages but keeps Snowfriend's memory of topics you've discussed</span>
                 </div>
                 <div class="modal-privacy-item">
                     <svg class="modal-privacy-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M13.5 4.5L6 12L2.5 8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                             stroke-linejoin="round" />
                     </svg>
-                    <span>Not even admins can recover deleted messages</span>
-                </div>
-                <div class="modal-privacy-item">
-                    <svg class="modal-privacy-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M13.5 4.5L6 12L2.5 8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" />
-                    </svg>
-                    <span>This action cannot be undone</span>
+                    <span><strong>Delete Conversations & Memories:</strong> Complete reset - removes everything including what Snowfriend remembers about you</span>
                 </div>
             </div>
 
             <div class="modal-actions">
                 <button class="modal-button modal-button-cancel" id="cancelClear">Cancel</button>
-                <button class="modal-button modal-button-confirm" id="confirmClear">Delete Forever</button>
+                <button class="modal-button modal-button-secondary" id="confirmClear">Delete Conversations Only</button>
+                <button class="modal-button modal-button-confirm" id="confirmClearAll">Delete Conversations & Memories</button>
             </div>
         </div>
     </div>
 
-    <!-- Export Conversation Modal -->
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmationModal">
+        <div class="modal-content confirmation-modal-content">
+            <h2 class="modal-title">⚠️ Are You Absolutely Sure?</h2>
+            <p class="modal-text">This will permanently delete:</p>
+
+            <div class="modal-privacy-box">
+                <div class="modal-privacy-item">
+                    <svg class="modal-privacy-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 2L3 7L8 12L13 7L8 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>All your conversation messages</span>
+                </div>
+                <div class="modal-privacy-item">
+                    <svg class="modal-privacy-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 2L3 7L8 12L13 7L8 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Snowfriend's memory of topics you've discussed</span>
+                </div>
+                <div class="modal-privacy-item">
+                    <svg class="modal-privacy-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 2L3 7L8 12L13 7L8 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>All patterns and preferences Snowfriend learned about you</span>
+                </div>
+            </div>
+
+            <p class="modal-warning-text">
+                <strong>This action cannot be undone.</strong> Snowfriend will forget everything and start fresh.
+            </p>
+
+            <div class="modal-actions">
+                <button class="modal-button modal-button-cancel" id="cancelConfirmation">No, I Changed My Mind</button>
+                <button class="modal-button modal-button-danger" id="confirmDeletion">Yes, Delete Everything</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
     <div class="modal-overlay" id="exportModal">
         <div class="modal-content export-modal-content">
             <h2 class="modal-title">Export Conversation</h2>
@@ -134,15 +187,19 @@
 
             <div class="export-title-section">
                 <label for="chatTitle" class="export-label">Chat Title:</label>
-                <input type="text" id="chatTitle" class="export-title-input"
-                    placeholder="Enter title or use AI-generated title" maxlength="100">
+                <div class="export-title-input-wrapper" id="titleInputWrapper">
+                    <input type="text" id="chatTitle" class="export-title-input"
+                        placeholder="Enter title or use AI-generated title" maxlength="100">
+                    <img src="{% static 'images/snowflake_loading_logo.png' %}" 
+                         alt="Loading" 
+                         class="title-loading-spinner" 
+                         id="titleLoadingSpinner">
+                </div>
                 <button id="generateTitleButton" class="generate-title-button">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M20 12C20 16.4183 16.4183 20 12 20C7.58172 20 4 16.4183 4 12C4 7.58172 7.58172 4 12 4C12.3378 4 12.6707 4.01909 13 4.05622"
+                        <path d="M20 12C20 16.4183 16.4183 20 12 20C7.58172 20 4 16.4183 4 12C4 7.58172 7.58172 4 12 4C12.3378 4 12.6707 4.01909 13 4.05622"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                        <path
-                            d="M15 4L15.1655 4.05556C15.7914 4.25936 16.3532 4.61715 16.8 5.09397L17.0542 5.37209C17.4555 5.80602 17.7279 6.34106 17.8414 6.91905L17.8944 7.21115C17.9681 7.6289 18 8.05373 18 8.47965L18 8.66667C18 9.40305 17.4031 10 16.6667 10H14.6667C13.9303 10 13.3333 9.40305 13.3333 8.66667L13.3333 8.47965C13.3333 8.05373 13.3652 7.6289 13.4389 7.21115L13.4919 6.91905C13.6054 6.34106 13.8778 5.80602 14.279 5.37209L14.5333 5.09397C14.9801 4.61715 15.5419 4.25936 16.1677 4.05556L16.3333 4"
+                        <path d="M15 4L15.1655 4.05556C15.7914 4.25936 16.3532 4.61715 16.8 5.09397L17.0542 5.37209C17.4555 5.80602 17.7279 6.34106 17.8414 6.91905L17.8944 7.21115C17.9681 7.6289 18 8.05373 18 8.47965L18 8.66667C18 9.40305 17.4031 10 16.6667 10H14.6667C13.9303 10 13.3333 9.40305 13.3333 8.66667L13.3333 8.47965C13.3333 8.05373 13.3652 7.6289 13.4389 7.21115L13.4919 6.91905C13.6054 6.34106 13.8778 5.80602 14.279 5.37209L14.5333 5.09397C14.9801 4.61715 15.5419 4.25936 16.1677 4.05556L16.3333 4"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                     </svg>
                     Generate Title
@@ -152,11 +209,17 @@
             <div class="export-preview-box">
                 <div class="export-preview-header">
                     <h3>Preview:</h3>
-                    <span class="export-info">Total messages: <span id="messageCount">0</span></span>
+                    <div class="export-preview-actions">
+                        <span class="export-info">Total messages: <span id="messageCount">0</span></span>
+                        <button id="expandPreviewButton" class="expand-preview-button" aria-label="Expand conversation">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span class="expand-tooltip">Expand Conversation</span>
+                        </button>
+                    </div>
                 </div>
-                <div class="export-preview-content" id="exportPreview">
-                    <!-- Preview content will be inserted here -->
-                </div>
+                <div class="export-preview-content" id="exportPreview"></div>
             </div>
 
             <div class="modal-actions">
@@ -171,17 +234,25 @@
         <img src="{% static 'images/snowflake_loading_logo.png' %}" alt="Loading" class="loading-spinner">
     </div>
 
-    <!-- Notification Message -->
+    <!-- Notification Container -->
     <div class="notification-container" id="notificationContainer"></div>
 
-    <footer class="footer">
-        <div class="footer-container">
-            <p class="footer-text">Snowfriend © 2025</p>
+    <!-- Fullscreen Preview -->
+    <div class="fullscreen-preview-overlay" id="fullscreenPreview">
+        <div class="fullscreen-preview-container">
+            <div class="fullscreen-preview-header">
+                <h2 class="fullscreen-preview-title">Conversation Preview</h2>
+                <button id="closeFullscreenButton" class="close-fullscreen-button" aria-label="Close full screen">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="fullscreen-preview-content" id="fullscreenPreviewContent"></div>
         </div>
-    </footer>
+    </div>
 
     <script>
-        // Pass user's first name to JavaScript
         const userName = "{{ user.first_name|default:'there' }}";
     </script>
     <script src="{% static 'js/chat.js' %}" defer></script>

@@ -156,10 +156,11 @@
             <div class="footer-links">
             <a href="#">Privacy Policy</a>
             <a href="#">Terms of Service</a>
-            <a href="#">Contact</a>
+            <a href="#" onclick="event.preventDefault(); openFeedbackModal();">Contact</a>
         </div>
         </div>
     </footer>
+    {% include 'feedback_modal.html' %}
 </body>
 
 </html>
