@@ -21,12 +21,12 @@
             </div>
             <!-- Countdown Timer -->
             <div class="countdown-timer" id="countdownTimer" style="display: none; opacity: 0;">
-    <svg class="timer-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-        <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-    <span class="timer-text" id="timerText"></span>
-</div>
+                <svg class="timer-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span class="timer-text" id="timerText"></span>
+            </div>
             <div class="header-actions">
                 <a href="{% url 'dashboard' %}" class="home-button" id="homeButton">
                     <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24">
@@ -47,67 +47,68 @@
             </div>
         </div>
 
-<div class="input-container">
-    <div class="input-wrapper-container">
-        <!-- Message input controls -->
-        <div class="input-controls">
-            <!-- Clear button -->
-            <button id="clearButton" class="clear-button" aria-label="Clear conversation">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3 6h18M8 6V4c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2v2m3 0v14c0 1.1-.9 2-2 2H7c-1.1 0-2-.9-2-2V6h14z"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    <path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
-                <span class="clear-tooltip">Clear Conversation</span>
-            </button>
+        <div class="input-container">
+            <div class="input-wrapper-container">
+                <!-- Message input controls -->
+                <div class="input-controls">
+                    <!-- Clear button -->
+                    <button id="clearButton" class="clear-button" aria-label="Clear conversation">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 6h18M8 6V4c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2v2m3 0v14c0 1.1-.9 2-2 2H7c-1.1 0-2-.9-2-2V6h14z"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                        <span class="clear-tooltip">Clear Conversation</span>
+                    </button>
 
-            <!-- Text input area -->
-            <div class="input-wrapper">
-                <textarea id="messageInput" class="message-input" placeholder="Type what's on your mind…" rows="1"
-                    maxlength="2000"></textarea>
-                <button id="sendButton" class="send-button" disabled aria-label="Send message">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M2 10L18 2L10 18L9 11L2 10Z" fill="currentColor" />
-                    </svg>
-                </button>
+                    <!-- Text input area -->
+                    <div class="input-wrapper">
+                        <textarea id="messageInput" class="message-input" placeholder="Type what's on your mind…" rows="1"
+                            maxlength="2000"></textarea>
+                        <button id="sendButton" class="send-button" disabled aria-label="Send message">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 10L18 2L10 18L9 11L2 10Z" fill="currentColor" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Export button -->
+                    <button id="exportButton" class="export-button" aria-label="Export conversation">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 16L4 17C4 18.6569 5.34315 20 7 20L17 20C18.6569 20 20 18.6569 20 17L20 16"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M16 12L12 8L8 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <path d="M12 4L12 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                        <span class="export-tooltip">Export Conversation</span>
+                    </button>
+
+                    <!-- Message counter (15 messages) -->
+                    <div class="message-counter" id="messageCounter">
+                        <span class="counter-text">Messages left: <strong id="messagesLeft">15</strong></span>
+                        <span class="counter-tooltip">You have <span id="tooltipMessagesLeft">15</span> messages left to chat with Snowfriend. When you reach 0, you'll need to wait 4 hours before chatting again. This limit encourages healthy AI usage. If you need immediate support, please view crisis resources below.</span>
+                    </div>
+                </div>
+
+                <div class="disclaimer-row">
+                    <p class="disclaimer">
+                        ⚠️ <strong>Important:</strong> Snowfriend is an AI companion, not a licensed therapist or crisis
+                        counselor.
+                        For emergencies or serious mental health concerns, please seek professional help immediately.
+                        <a href="#" onclick="event.preventDefault(); showResourcesModal();" class="crisis-link">
+                            View crisis resources
+                        </a>
+                    </p>
+                </div>
+
+                <div class="footer-row">
+                    <p class="footer-text">Snowfriend © 2025</p>
+                </div>
             </div>
-
-            <!-- Export button -->
-            <button id="exportButton" class="export-button" aria-label="Export conversation">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M4 16L4 17C4 18.6569 5.34315 20 7 20L17 20C18.6569 20 20 18.6569 20 17L20 16"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    <path d="M16 12L12 8L8 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <path d="M12 4L12 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
-                <span class="export-tooltip">Export Conversation</span>
-            </button>
-
-            <!-- ✅ UPDATED: Message counter (20 → 15) -->
-            <div class="message-counter" id="messageCounter">
-                <span class="counter-text">Messages left: <strong id="messagesLeft">15</strong></span>
-            </div>
         </div>
-
-        <div class="disclaimer-row">
-            <p class="disclaimer">
-                ⚠️ <strong>Important:</strong> Snowfriend is an AI companion, not a licensed therapist or crisis
-                counselor.
-                For emergencies or serious mental health concerns, please seek professional help immediately.
-                <a href="#" onclick="event.preventDefault(); showResourcesModal();" class="crisis-link">
-                    View crisis resources
-                </a>
-            </p>
-        </div>
-
-        <div class="footer-row">
-            <p class="footer-text">Snowfriend © 2025</p>
-        </div>
-    </div>
-</div>
     </main>
 
     <!-- Clear Conversation Modal -->
@@ -252,10 +253,26 @@
         </div>
     </div>
 
+    <!-- User name variable -->
     <script>
         const userName = "{{ user.first_name|default:'there' }}";
     </script>
-    <script src="{% static 'js/chat.js' %}" defer></script>
+
+    <!-- ✅ LOAD SCRIPTS IN CORRECT ORDER -->
+    <!-- 1. Core utilities first -->
+    <script src="{% static 'js/chatbot/chat_limit.js' %}" defer></script>
+    <script src="{% static 'js/chatbot/chat_ui.js' %}" defer></script>
+    
+    <!-- 2. Feature modules -->
+    <script src="{% static 'js/chatbot/chat_modals.js' %}" defer></script>
+    <script src="{% static 'js/chatbot/chat_messages.js' %}" defer></script>
+    <script src="{% static 'js/chatbot/chat_media.js' %}" defer></script>
+    
+    <!-- 3. Main orchestrator last -->
+    <script src="{% static 'js/chatbot/chat.js' %}" defer></script>
+
+    <!-- Include Feedback Modal -->
+    {% include 'feedback_modal.html' %}
 </body>
 
 </html>

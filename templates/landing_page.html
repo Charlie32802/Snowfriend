@@ -113,15 +113,18 @@
         <div class="footer-container">
             <p class="footer-text">Snowfriend © 2025</p>
             <div class="footer-links">
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
-                <a href="#" onclick="event.preventDefault(); openFeedbackModal();">Contact</a>
+                <a href="Privacy Policy" onclick="event.preventDefault(); openPrivacyModal();">Privacy Policy</a>
+                <a href="Terms of Service">Terms of Service</a>
+                <a href="Contact" onclick="event.preventDefault(); openFeedbackModal();">Contact</a>
             </div>
         </div>
     </footer>
 
     <!-- Include Feedback Modal -->
     {% include 'feedback_modal.html' %}
+
+    <!-- Include Privacy Policy Modal -->
+    {% include 'privacy_policy_modal.html' %}
 </body>
 
 </html>

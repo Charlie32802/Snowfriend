@@ -28,6 +28,7 @@
         {% endfor %}
     </div>
     {% endif %}
+    
     <header class="header">
         <div class="header-container">
             <div class="logo">
@@ -93,12 +94,12 @@
                     </div>
 
                     <button type="submit" class="button-primary" id="loginButton">
-    <span class="button-text">Sign In</span>
-    <img src="{% static 'images/snowflake_loading_logo.png' %}" alt="Loading" class="button-loader">
-</button>
+                        <span class="button-text">Sign In</span>
+                        <img src="{% static 'images/snowflake_loading_logo.png' %}" alt="Loading" class="button-loader">
+                    </button>
 
                     <div class="auth-links">
-                        <a href="#" class="link-secondary">Forgot your password?</a>
+                        <a href="#" class="link-secondary" onclick="event.preventDefault(); openPasswordResetModal();">Forgot your password?</a>
                     </div>
                 </form>
 
@@ -115,13 +116,21 @@
         <div class="footer-container">
             <p class="footer-text">Snowfriend © 2025</p>
             <div class="footer-links">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-            <a href="#" onclick="event.preventDefault(); openFeedbackModal();">Contact</a>
-        </div>
+                <a href="Privacy Policy" onclick="event.preventDefault(); openPrivacyModal();">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="Contact" onclick="event.preventDefault(); openFeedbackModal();">Contact</a>
+            </div>
         </div>
     </footer>
+    
+    <!-- Include Feedback Modal -->
     {% include 'feedback_modal.html' %}
+
+    <!-- Include Privacy Policy Modal -->
+    {% include 'privacy_policy_modal.html' %}
+
+    <!-- Include Password Reset Modal -->
+    {% include 'password_reset.html' %}
 </body>
 
 </html>

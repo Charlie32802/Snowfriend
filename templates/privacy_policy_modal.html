@@ -1,0 +1,298 @@
+{% load static %}
+
+<!-- Privacy Policy Modal -->
+<div class="modal-overlay" id="privacyPolicyModal" style="display: none;">
+    <div class="modal-content privacy-modal-content">
+        <div class="modal-header-with-close">
+            <h2 class="modal-title">Privacy Policy</h2>
+            <button type="button" class="modal-close-button" id="closePrivacyModal" aria-label="Close">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+
+        <p class="modal-subtitle">Last updated: December 30, 2025</p>
+
+        <div class="privacy-content">
+            <!-- Introduction -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Introduction</h3>
+                <p class="privacy-text">
+                    Welcome to Snowfriend. We are committed to protecting your privacy and providing a safe, 
+                    supportive environment for mental wellness and personal reflection. This Privacy Policy 
+                    explains how we collect, use, and protect your information.
+                </p>
+                <p class="privacy-text">
+                    <strong>Important:</strong> Snowfriend is an AI-powered companion, not a substitute for 
+                    professional mental health care. For emergencies or serious concerns, please contact 
+                    qualified professionals or crisis services.
+                </p>
+            </section>
+
+            <!-- Information We Collect -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Information We Collect</h3>
+                
+                <div class="privacy-subsection">
+                    <h4 class="privacy-subheading">Account Information</h4>
+                    <ul class="privacy-list">
+                        <li>Full name (required for account creation)</li>
+                        <li>Email address (for account login, password recovery, and account notifications)</li>
+                        <li>Username (automatically generated from email)</li>
+                        <li>Password (encrypted using Django's secure hashing)</li>
+                    </ul>
+                </div>
+
+                <div class="privacy-subsection">
+                    <h4 class="privacy-subheading">Conversation Data</h4>
+                    <ul class="privacy-list">
+                        <li>Messages you send to Snowfriend</li>
+                        <li>AI-generated responses from Snowfriend</li>
+                        <li>Conversation timestamps</li>
+                        <li>Topics discussed (stored for conversation continuity)</li>
+                        <li>Your first name (used to personalize responses)</li>
+                    </ul>
+                </div>
+
+                <div class="privacy-subsection">
+                    <h4 class="privacy-subheading">Usage Information</h4>
+                    <ul class="privacy-list">
+                        <li>Login timestamps</li>
+                        <li>Message count and rate limits</li>
+                        <li>Conversation metadata (length, date created)</li>
+                    </ul>
+                </div>
+
+                <div class="privacy-subsection">
+                    <h4 class="privacy-subheading">Feedback & Support</h4>
+                    <ul class="privacy-list">
+                        <li>Anonymous feedback submissions (ratings, comments)</li>
+                        <li>Optional images attached to feedback</li>
+                        <li>No personally identifiable information required for feedback</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- How We Use Your Information -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">How We Use Your Information</h3>
+                <p class="privacy-text">We use your information to:</p>
+                <ul class="privacy-list">
+                    <li><strong>Provide our service:</strong> Enable conversations, maintain context, and personalize responses using your first name</li>
+                    <li><strong>Ensure safety:</strong> Detect crisis situations and log concerning patterns for review</li>
+                    <li><strong>Maintain security:</strong> Protect your account from unauthorized access</li>
+                    <li><strong>Improve Snowfriend:</strong> Use anonymous, aggregated data to enhance the experience</li>
+                </ul>
+            </section>
+
+            <!-- AI and Third-Party Services -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">AI Processing & Third-Party Services</h3>
+                <div class="privacy-highlight-box">
+                    <p class="privacy-text" style="margin-bottom: 0.75rem;">
+                        <strong>How Your Data is Processed:</strong>
+                    </p>
+                    <ul class="privacy-list">
+                        <li>Snowfriend uses AI language models provided by <strong>OpenRouter</strong> to generate responses</li>
+                        <li>Your conversation messages are sent to OpenRouter's API for processing</li>
+                        <li><strong>Your first name</strong> is included in requests to personalize responses</li>
+                        <li>According to OpenRouter's policies, your conversations are <strong>not used to train AI models</strong></li>
+                        <li>We use industry-standard API security (HTTPS, authentication tokens)</li>
+                        <li>No email address or full name is sent to AI providers</li>
+                    </ul>
+                </div>
+                <p class="privacy-text">
+                    For more information about OpenRouter's privacy practices, visit: 
+                    <a href="https://openrouter.ai/privacy" target="_blank" class="privacy-link">openrouter.ai/privacy</a>
+                </p>
+            </section>
+
+            <!-- Data Security -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Data Security</h3>
+                <div class="privacy-highlight-box">
+                    <div class="privacy-highlight-item">
+                        <svg class="privacy-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="2"/>
+                            <path d="M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V11" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <div>
+                            <strong>Password Security:</strong>
+                            <span>Passwords are hashed using Django's secure PBKDF2 algorithm</span>
+                        </div>
+                    </div>
+                    <div class="privacy-highlight-item">
+                        <svg class="privacy-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2"/>
+                            <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <div>
+                            <strong>HTTPS Encryption:</strong>
+                            <span>Data transmitted between your browser and our servers is encrypted in transit</span>
+                        </div>
+                    </div>
+                    <div class="privacy-highlight-item">
+                        <svg class="privacy-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 21V5C16 3.89543 15.1046 3 14 3H10C8.89543 3 8 3.89543 8 5V21" stroke="currentColor" stroke-width="2"/>
+                            <path d="M3 21H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <div>
+                            <strong>No Third-Party Sharing:</strong>
+                            <span>We do not sell or share your conversations with third parties</span>
+                        </div>
+                    </div>
+                    <div class="privacy-highlight-item">
+                        <svg class="privacy-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 12L11 14L15 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <div>
+                            <strong>CSRF Protection:</strong>
+                            <span>All forms are protected against cross-site request forgery attacks</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Your Rights -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Your Rights & Controls</h3>
+                <p class="privacy-text">You have the right to:</p>
+                <ul class="privacy-list">
+                    <li><strong>View Your Data:</strong> All conversations are visible in your chat interface</li>
+                    <li><strong>Delete Conversations:</strong> Clear your conversation history at any time using the "Clear" button</li>
+                    <li><strong>Delete Memory:</strong> Remove Snowfriend's memory of topics discussed using "Delete Conversations & Memories"</li>
+                    <li><strong>Export Conversations:</strong> Download your conversations as text files</li>
+                    <li><strong>Close Account:</strong> Contact us to delete your account and all associated data</li>
+                </ul>
+            </section>
+
+            <!-- Data Retention -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Data Retention</h3>
+                <p class="privacy-text">
+                    We retain your data as follows:
+                </p>
+                <ul class="privacy-list">
+                    <li><strong>Conversations:</strong> Stored until you manually delete them</li>
+                    <li><strong>Account data:</strong> Retained as long as your account is active</li>
+                    <li><strong>Memory data:</strong> Stored until you clear it or delete your account</li>
+                    <li><strong>Deleted data:</strong> Permanently removed from our database immediately</li>
+                    <li><strong>Backup data:</strong> May persist in backups for up to 30 days before being overwritten</li>
+                </ul>
+            </section>
+
+            <!-- Crisis Logging -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Crisis Detection & Logging</h3>
+                <div class="privacy-highlight-box">
+                    <p class="privacy-text">
+                        <strong>Important Safety Feature:</strong> When Snowfriend detects potential crisis situations 
+                        (such as mentions of self-harm or suicide), the following information is logged:
+                    </p>
+                    <ul class="privacy-list">
+                        <li>Username (not full name or email)</li>
+                        <li>Timestamp of concerning message</li>
+                        <li>Category of concern detected</li>
+                        <li>First 100 characters of the message</li>
+                    </ul>
+                    <p class="privacy-text">
+                        This logging helps us monitor for potential emergencies and improve our crisis detection system. 
+                        Logs are stored securely and reviewed only when necessary for safety purposes.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Cookies and Tracking -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Cookies & Session Management</h3>
+                <p class="privacy-text">
+                    We use essential cookies to:
+                </p>
+                <ul class="privacy-list">
+                    <li>Keep you logged in (session cookies)</li>
+                    <li>Protect against security threats (CSRF tokens)</li>
+                    <li>Remember your authentication state</li>
+                </ul>
+                <p class="privacy-text">
+                    <strong>We do NOT use:</strong>
+                </p>
+                <ul class="privacy-list">
+                    <li>Third-party tracking cookies</li>
+                    <li>Analytics cookies that identify you personally</li>
+                    <li>Advertising cookies</li>
+                    <li>Social media tracking pixels</li>
+                </ul>
+            </section>
+
+            <!-- User Eligibility -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">User Eligibility</h3>
+                <p class="privacy-text">
+                    By creating an account, you confirm that you have the legal capacity to enter into 
+                    this agreement in your jurisdiction. If you are under the age of 18, you should use 
+                    Snowfriend with parental guidance.
+                </p>
+                <p class="privacy-text">
+                    <strong>For Users Under 18:</strong> Please discuss your use of Snowfriend with a 
+                    parent or guardian, especially if you're experiencing difficult emotions or situations.
+                </p>
+            </section>
+
+            <!-- Limitations -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Service Limitations</h3>
+                <div class="privacy-highlight-box">
+                    <p class="privacy-text">
+                        <strong>Please understand:</strong>
+                    </p>
+                    <ul class="privacy-list">
+                        <li>Snowfriend is an AI system, not a licensed therapist or medical professional</li>
+                        <li>Conversations with Snowfriend should not replace professional mental health care</li>
+                        <li>In emergencies, please contact crisis services, call 911, or visit your nearest emergency room</li>
+                        <li>Snowfriend cannot diagnose, treat, or cure any medical or mental health conditions</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Changes to This Policy -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Changes to This Policy</h3>
+                <p class="privacy-text">
+                    We may update this Privacy Policy from time to time. Significant changes will be 
+                    communicated through:
+                </p>
+                <ul class="privacy-list">
+                    <li>A notice on the website</li>
+                    <li>Updated "Last updated" date at the top of this policy</li>
+                </ul>
+                <p class="privacy-text">
+                    Continued use of Snowfriend after changes indicates acceptance of the updated policy.
+                </p>
+            </section>
+
+            <!-- Contact Us -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Contact Us</h3>
+                <p class="privacy-text">
+                    If you have questions about this Privacy Policy or how we handle your data, 
+                    please contact us:
+                </p>
+                <div class="privacy-contact-box">
+                    <p><strong>Feedback:</strong> <a href="#" onclick="event.preventDefault(); transitionToFeedbackModal();" class="privacy-link">Share your feedback</a></p>
+                    <p><strong>Email:</strong> <a href="https://mail.google.com/mail/?view=cm&fs=1&to=marcdaryll.trinidad@gmail.com&su=Snowfriend%20Privacy%20Inquiry" class="privacy-link" target="_blank" rel="noopener noreferrer">marcdaryll.trinidad@gmail.com</a></p>
+                </div>
+            </section>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="modal-button modal-button-confirm" id="closePrivacyButton">
+                I Understand
+            </button>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="{% static 'css/privacy.css' %}">
+<script src="{% static 'js/privacy.js' %}" defer></script>

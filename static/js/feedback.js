@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Then add show class for animation in next frame
         requestAnimationFrame(() => {
             feedbackModal.classList.add('show');
+            // Ensure modal-open class is always applied, even if transitioning from another modal
             document.documentElement.classList.add('modal-open');
             document.body.classList.add('modal-open');
         });
@@ -56,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             feedbackModal.classList.remove('show', 'closing');
             feedbackModal.style.display = 'none';
+            // Remove modal-open class when closing
             document.documentElement.classList.remove('modal-open');
             document.body.classList.remove('modal-open');
             resetForm();

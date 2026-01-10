@@ -1,4 +1,4 @@
-# models.py - UPDATED WITH LONG-TERM MEMORY AND DATE TRACKING
+# models.py - UPDATED WITH MEDIA MESSAGE SUPPORT
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -6,6 +6,7 @@ from datetime import date
 
 class Conversation(models.Model):
     """Represents a chat session between a user and Snowfriend"""
+    conversation_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='conversations')
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
@@ -13,6 +14,7 @@ class Conversation(models.Model):
     
     class Meta:
         ordering = ['-updated_at']
+        db_table = 'chatbot_conversation'
         indexes = [
             models.Index(fields=['user', '-updated_at']),
             models.Index(fields=['user', 'is_active']),
@@ -26,11 +28,12 @@ class Conversation(models.Model):
         ]
     
     def __str__(self):
-        return f"Conversation {self.id} - {self.user.username}"
-
+        return f"Conversation {self.conversation_id} - {self.user.username}"
 
 class Message(models.Model):
     """Individual messages within a conversation"""
+    message_id = models.AutoField(primary_key=True)
+    
     ROLE_CHOICES = [
         ('user', 'User'),
         ('assistant', 'Assistant'),
@@ -44,26 +47,73 @@ class Message(models.Model):
     is_flagged = models.BooleanField(default=False)
     flagged_reason = models.CharField(max_length=100, blank=True, null=True)
     
+    # ✅ NEW: Media message support
+    is_media_message = models.BooleanField(default=False, help_text="True if this message contains media content")
+    media_type = models.CharField(
+        max_length=20, 
+        blank=True, 
+        null=True,
+        help_text="Type of media: 'video' or 'image'"
+    )
+    media_data = models.JSONField(
+        default=dict, 
+        blank=True,
+        help_text="Media metadata: video IDs, URLs, titles, etc."
+    )
+    
     class Meta:
         ordering = ['timestamp']
+        db_table = 'chatbot_message'
         indexes = [
             models.Index(fields=['conversation', 'timestamp']),
+            models.Index(fields=['is_media_message']),
         ]
     
     def __str__(self):
+        if self.is_media_message:
+            return f"{self.role}: [Media: {self.media_type}]"
         return f"{self.role}: {self.content[:50]}..."
-
+    
+    def get_media_links(self):
+        """
+        Extract media links for export/display
+        Returns list of formatted links
+        """
+        if not self.is_media_message or not self.media_data:
+            return []
+        
+        links = []
+        
+        if self.media_type == 'video' and 'videos' in self.media_data:
+            for video in self.media_data['videos']:
+                links.append({
+                    'title': video.get('title', 'Video'),
+                    'url': video.get('url', ''),
+                    'channel': video.get('channel', ''),
+                    'description': video.get('description', '')
+                })
+        
+        elif self.media_type == 'image' and 'images' in self.media_data:
+            for image in self.media_data['images']:
+                links.append({
+                    'title': image.get('alt', 'Image'),
+                    'url': image.get('url', ''),
+                    'photographer': image.get('photographer', ''),
+                    'source': image.get('photographer_url', '')
+                })
+        
+        return links
 
 class UserMemory(models.Model):
     """
-    ✅ UPDATED: Long-term memory for users across all conversations with date tracking
+    Long-term memory for users across all conversations with date tracking
     Stores facts, preferences, and patterns learned about each user
     """
     memory_id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='long_term_memory')
     
     # ====================================================================
-    # ✅ NEW: DATE TRACKING
+    # DATE TRACKING
     # ====================================================================
     first_conversation_date = models.DateField(null=True, blank=True)
     last_conversation_date = models.DateField(null=True, blank=True)
@@ -247,7 +297,7 @@ class UserMemory(models.Model):
     
     def get_days_since_first_conversation(self) -> int:
         """
-        ✅ NEW: Calculate how many days since first conversation
+        Calculate how many days since first conversation
         Returns 0 if no first conversation date set
         """
         if not self.first_conversation_date:
@@ -257,18 +307,9 @@ class UserMemory(models.Model):
         delta = today - self.first_conversation_date
         return delta.days
 
-
-#======================This is the updated model for message limits======================#
-
 class MessageLimit(models.Model):
-    """
-    Track message limits per user to manage API usage
-    
-    Features:
-    - 15 messages per user per period (UPDATED from 20)
-    - 4-hour reset period
-    - Automatic reset when time expires
-    """
+    """Track message limits per user to manage API usage"""
+    ml_id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='message_limit')
     
     # Message tracking
@@ -289,7 +330,7 @@ class MessageLimit(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
-        db_table = 'message_limits'
+        db_table = 'chatbot_messagelimit'
         verbose_name = 'Message Limit'
         verbose_name_plural = 'Message Limits'
     

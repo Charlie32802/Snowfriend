@@ -66,7 +66,7 @@ class ContextAnalyzer:
             'user_names': [],
             'disclaimer_shown': False,
         }
-        
+    
         self.verb_blacklist = {
             'trying', 'working', 'going', 'doing', 'feeling', 'thinking', 
             'being', 'getting', 'making', 'having', 'taking', 'coming',
@@ -86,7 +86,30 @@ class ContextAnalyzer:
             'confused', 'lost', 'stuck', 'trapped', 'scared', 'afraid',
             'crying', 'laughing', 'smiling', 'frowning', 'yelling', 'screaming',
             'was', 'were', 'been', 'had', 'did', 'made', 'went', 'came',
-            'will', 'would', 'could', 'should', 'might', 'may', 'can'
+            'will', 'would', 'could', 'should', 'might', 'may', 'can',
+            'anxious', 'depressed', 'stressed', 'overwhelmed', 'frustrated',
+            'disappointed', 'hopeless', 'helpless', 'devastated', 'broken',
+            'hurt', 'upset', 'annoyed', 'irritated', 'furious', 'enraged',
+            'terrified', 'frightened', 'panicked', 'paranoid', 'guilty',
+            'ashamed', 'embarrassed', 'humiliated', 'jealous', 'envious',
+            'lonely', 'isolated', 'abandoned', 'rejected', 'worthless',
+            'miserable', 'pathetic', 'useless', 'weak', 'strong', 'brave',
+            'confident', 'proud', 'grateful', 'thankful', 'blessed', 'lucky',
+            'curious', 'interested', 'bored', 'indifferent', 'numb', 'empty',
+            'drained', 'burnt', 'motivated', 'determined', 'focused', 'distracted',
+            'comfortable', 'uncomfortable', 'uneasy', 'tense', 'relaxed', 'calm',
+            'peaceful', 'content', 'satisfied', 'pleased', 'delighted', 'thrilled',
+            'ecstatic', 'euphoric', 'joyful', 'cheerful', 'optimistic', 'pessimistic',
+            'hopeful', 'doubtful', 'uncertain', 'sure', 'positive', 'negative',
+            'eager', 'reluctant', 'willing', 'unwilling', 'patient', 'impatient',
+            'tolerant', 'intolerant', 'understanding', 'judgmental', 'supportive',
+            'critical', 'encouraging', 'discouraging', 'inspiring', 'demotivating',
+            'actually', 'basically', 'really', 'truly', 'honestly', 'literally',
+            'seriously', 'totally', 'completely', 'absolutely', 'definitely',
+            'probably', 'possibly', 'maybe', 'perhaps', 'surely', 'certainly',
+            'obviously', 'clearly', 'apparently', 'supposedly', 'allegedly',
+            'generally', 'usually', 'normally', 'typically', 'commonly',
+            'recently', 'currently', 'presently', 'eventually', 'finally',
         }
 
     # ========================================================================
@@ -440,10 +463,28 @@ class ContextAnalyzer:
         crisis_patterns = [
             r'\b(want to die|suicide|kill myself|end it all|no reason to live)',
             r'\b(can\'?t take it anymore|better off dead|no way out)',
+    ]
+
+    # ✅ NEW: Anxiety-specific patterns (check BEFORE negative patterns)
+        anxiety_patterns = [
+            r'\b(anxious|anxiety|nervous|worried about|stress|stressed|overwhelm)',
+            r'\b(afraid|scared|terrified|panic|panicking)',
+            r'\bdon\'?t know what to expect',
+            r'\bnot sure (what|how|if)',
+            r'\bworried that',
         ]
 
+        anxiety_count = sum(1 for p in anxiety_patterns if re.search(p, text_lower))
+
+        if anxiety_count > 0:
+        # Check if it's severe anxiety (multiple indicators or severe words)
+            if anxiety_count >= 2 or any(word in text_lower for word in ['terrified', 'panic', 'panicking']):
+                return 'crisis'  # Severe anxiety → crisis handling
+            else:
+                return 'anxiety'  # Moderate anxiety → special anxiety handling
+
         negative_patterns = [
-            r'\b(sad|depressed|upset|angry|frustrated|scared|anxious|worried)',
+            r'\b(sad|depressed|upset|angry|frustrated|scared|worried)',
             r'\b(hate|terrible|awful|horrible|bad|worst|crying|hurt)',
             r'\b(not (good|ok|okay|fine)|feeling (bad|down|low))',
         ]
@@ -658,14 +699,25 @@ class ContextAnalyzer:
         ]
 
         level_4_indicators = [
-            r'\b(depressed|anxious|scared|terrified|hopeless|lonely)',
-            r'\b(family problems|broke up|fired|failed)',
-            r'\balone (against the world|in the world)',
+            r'\b(depressed|depression|deeply depressed|severely depressed)\b',
+            r'\b(hopeless|no hope|giving up|gave up)\b',
+            r'\b(terrified|petrified|paralyzed with fear)\b',
+            r'\b(anxious (all the time|constantly|every day))\b',
+            r'\b(panic attack|anxiety attack|breakdown)\b',
         ]
 
         level_3_indicators = [
-            r'\b(upset|frustrated|worried|concerned|bothered)',
-            r'\b(argument|fight|disagreement)',
+            # Situational fear/anxiety (normal responses to life events)
+            r'\b(scared|nervous|anxious|worried) (about|for|of).{0,30}(exam|test|interview|presentation|OJT|internship|job|school|class|assignment|project|deadline)\b',
+            r'\b(stressed|overwhelmed|pressured).{0,30}(about|by|from).{0,30}(school|work|exam|deadline|assignment)\b',
+        
+            # Interpersonal conflicts (normal relationship issues)
+            r'\b(argument|fight|disagreement|conflict).{0,30}(with|about)\b',
+            r'\b(upset|frustrated|annoyed|bothered).{0,30}(with|by|about)\b',
+        
+            # Future-oriented worry (normal anticipatory anxiety)
+            r'\b(worried about|concerned about|nervous about).{0,30}(next|upcoming|tomorrow|future)\b',
+            r'\b(don\'?t know (what|how|if)).{0,30}(will|going to|next|future)\b',
         ]
 
         level_2_indicators = [
@@ -682,6 +734,59 @@ class ContextAnalyzer:
             return 2
         else:
             return 1
+        
+    def detect_identity_question(self, text: str) -> Dict[str, bool]:
+        """
+        ✅ UNIVERSAL: Detect when user is asking about their own identity
+    
+        Returns:
+            {
+                'is_identity_question': bool,
+                'asking_about_email': bool,
+                'asking_who_they_are': bool,
+                'asking_if_known': bool
+            }
+        """
+        text_lower = text.lower()
+    
+    # "Who am I?" / "Don't you know who I am?"
+        who_am_i_patterns = [
+            r'\b(who am i|who i am)\b',
+            r'\bdon\'?t you know who i am\b',
+            r'\bdo you know who i am\b',
+            r'\bknow who i am\b',
+            r'\bdo you remember me\b',
+            r'\bremember who i am\b',
+        ]
+    
+    # "Do you know my email?"
+        email_patterns = [
+            r'\b(do you know|don\'?t you know|know).{0,20}(my )?(email|e-?mail)\b',
+            r'\bmy email (address|is)\b',
+            r'\bwhat\'?s my email\b',
+            r'\bknow my (email|e-?mail)\b',
+        ]   
+    
+    # General "do you know me?"
+        know_me_patterns = [
+            r'\bdo you know me\b',
+            r'\bdon\'?t you know me\b',
+            r'\bknow (anything about|who) me\b',
+            r'\bremember (anything about|who) me\b',
+        ]
+    
+        asking_who_they_are = any(re.search(p, text_lower) for p in who_am_i_patterns)
+        asking_about_email = any(re.search(p, text_lower) for p in email_patterns)
+        asking_if_known = any(re.search(p, text_lower) for p in know_me_patterns)
+    
+        is_identity_question = asking_who_they_are or asking_about_email or asking_if_known
+    
+        return {
+            'is_identity_question': is_identity_question,
+            'asking_about_email': asking_about_email,
+            'asking_who_they_are': asking_who_they_are,
+            'asking_if_known': asking_if_known,
+        }
 
     def analyze_needs_validation(self, emotional_tone: str, topic_type: str) -> bool:
         """Determine if user needs validation vs. exploration"""
@@ -825,8 +930,17 @@ class ContextAnalyzer:
         key_entities = self.extract_key_entities(text)
         implicit_requests = self.detect_implicit_requests(text, emotional_tone, topic_type, conversation_history)
 
+    # ✅ NEW: Identity question detection
+        identity_info = self.detect_identity_question(text)
+        if identity_info['is_identity_question']:
+            implicit_requests.append('identity_verification')
+            if identity_info['asking_about_email']:
+                implicit_requests.append('asking_about_email')
+            if identity_info['asking_who_they_are']:
+                implicit_requests.append('asking_who_they_are')
+
         question_type = self.detect_question_type(text, conversation_history)
-        
+    
         if question_type == 'offer':
             implicit_requests.append('user_offering_to_share')
         elif question_type == 'deflection':
@@ -862,7 +976,7 @@ class ContextAnalyzer:
         minimal_question_mode = not (is_family_drama or disclosure_depth >= 4)
 
         message_elements = self.extract_message_elements(text, conversation_history)
-        
+    
         initial_context = ConversationContext(
             temporal_scope=temporal_scope,
             emotional_tone=emotional_tone,
@@ -883,7 +997,7 @@ class ContextAnalyzer:
             element_priorities={},
             disclaimer_shown=self.user_profile.get('disclaimer_shown', False)
         )
-        
+    
         element_priorities = self.calculate_element_priorities(message_elements, initial_context)
         initial_context.element_priorities = element_priorities
 

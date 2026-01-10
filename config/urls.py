@@ -16,7 +16,9 @@ urlpatterns = [
     path('register/', account_views.register_page, name='register'),
     path('dashboard/', account_views.dashboard, name='dashboard'),
     path('logout/', account_views.logout_view, name='logout'),
-    
+    path('accounts/password-reset/', account_views.password_reset_request, name='password_reset_request'),
+    path('accounts/password-reset/<uidb64>/<token>/', account_views.password_reset_confirm, name='password_reset_confirm'),
+
     # Chat page
     path('chat/', account_views.chat_page, name='chat'),
     
@@ -30,6 +32,7 @@ urlpatterns = [
     path('feedback/api/submit/', feedback_views.submit_feedback, name='submit_feedback'),
     path('chat/api/send/streaming/', chatbot_views.chat_api_send_streaming, name='chat_api_send_streaming'),
     path('chat/api/limit/', chatbot_views.get_message_limit, name='message_limit'),
+    path('chat/api/media/search/', chatbot_views.search_media_api, name='search_media_api'),
 ]
 
 if settings.DEBUG:

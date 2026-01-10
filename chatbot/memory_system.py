@@ -20,25 +20,31 @@ class ConversationMemory:
     
     def extract_conversation_facts(self, conversation_history: List[Dict]) -> Dict:
         """
-        Extract key facts from conversation history with PATTERN COMBINATIONS
-        
-        ✅ ULTRA-FIXED: Topics extracted ONLY from words user ACTUALLY said
-        ✅ UNIVERSAL: Works for ANY topic, not just predefined ones
-        ✅ NEW: Tracks Snowfriend's recent questions and user answers
-        
-        Returns: {
-            'topics_discussed': ['boxing', 'food', 'weather'],  # ONLY what user said
-            'entities_mentioned': {'people': [], 'places': [], 'activities': []},
-            'emotions_expressed': ['sad', 'frustrated'],
-            'first_user_message': "heyy here",
-            'exchange_count': 5,
-            'has_shared_problem': True,
-            'recent_topics': ['last 3 topics'],
-            'pattern_combinations': [],
-            'last_message_patterns': {},
-            'bot_recent_questions': ['what\'s on your mind', 'what are you doing'],
-            'user_answered_questions': {'status_check', 'activity_check'}
-        }
+        Extract key facts from conversation history with pattern combination tracking.
+    
+        Extraction strategy:
+        - Identifies topics user explicitly mentioned in their messages
+        - Detects entities (people, places, activities) through pattern matching
+        - Tracks emotional expressions and problem-sharing indicators
+        - Records bot's recent questions to prevent repetition
+        - Monitors which questions user has already answered
+    
+        Args:
+            conversation_history: List of message dictionaries with 'role' and 'content'
+    
+        Returns:
+            Dict containing:
+            - topics_discussed: Set of topic strings user mentioned
+            - entities_mentioned: Dict of categorized entities (people, places, activities, objects)
+            - emotions_expressed: Set of detected emotion indicators
+            - first_user_message: Initial message content
+            - exchange_count: Number of user messages
+            - has_shared_problem: Boolean indicating problem disclosure
+            - recent_topics: List of topics from last 3 messages
+            - pattern_combinations: List of detected message pattern combinations
+            - last_message_patterns: Dict of patterns in most recent message
+            - bot_recent_questions: List of question types bot recently asked
+            - user_answered_questions: Set of question types user addressed
         """
         facts = {
             'topics_discussed': set(),

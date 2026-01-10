@@ -1,0 +1,386 @@
+#privacyPolicyModal.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    opacity: 0;
+    transition: opacity 0.3s ease, background-color 0.3s ease;
+}
+
+#privacyPolicyModal.modal-overlay.show {
+    display: flex;
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+#privacyPolicyModal.modal-overlay.closing {
+    opacity: 0;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+#privacyPolicyModal .modal-content {
+    transform: scale(0.95) translateY(10px);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+#privacyPolicyModal.modal-overlay.show .modal-content {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+#privacyPolicyModal.modal-overlay.closing .modal-content {
+    transform: scale(0.95) translateY(10px);
+    opacity: 0;
+}
+
+#privacyPolicyModal .modal-content {
+    background-color: #2d3135;
+    border-radius: 12px;
+    padding: 2rem;
+    width: 90%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    overflow-y: auto;
+}
+
+#privacyPolicyModal .modal-content::-webkit-scrollbar {
+    width: 10px;
+}
+
+#privacyPolicyModal .modal-content::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 5.5px 0;
+}
+
+#privacyPolicyModal .modal-content::-webkit-scrollbar-thumb {
+    background: #3d5a75;
+    border-radius: 10px;
+    border: 3px solid #2d3135;
+    background-clip: padding-box;
+}
+
+#privacyPolicyModal .modal-content::-webkit-scrollbar-thumb:hover {
+    background: #4a6b8a;
+}
+
+#privacyPolicyModal .modal-content::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+.privacy-modal-content {
+    max-width: 800px !important;
+    max-height: 85vh;
+}
+
+.modal-header-with-close {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+}
+
+.modal-close-button {
+    background-color: transparent;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9aa0a6;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.modal-close-button:hover {
+    background-color: rgba(74, 107, 138, 0.15);
+    color: #4a6b8a;
+}
+
+.modal-close-button svg {
+    width: 24px;
+    height: 24px;
+}
+
+.modal-subtitle {
+    color: #9aa0a6;
+    font-size: 0.85rem;
+    margin: 0 0 1.5rem 0;
+    font-style: italic;
+}
+
+.privacy-content {
+    color: #e8eaed;
+    line-height: 1.7;
+}
+
+.privacy-section {
+    margin-bottom: 2rem;
+}
+
+.privacy-section:last-child {
+    margin-bottom: 0;
+}
+
+.privacy-heading {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #e8eaed;
+    margin: 0 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #3d5a75;
+}
+
+.privacy-subheading {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #e8eaed;
+    margin: 1rem 0 0.5rem 0;
+}
+
+.privacy-text {
+    color: #9aa0a6;
+    font-size: 0.95rem;
+    margin: 0 0 1rem 0;
+    line-height: 1.7;
+}
+
+.privacy-subsection {
+    margin-bottom: 1.5rem;
+}
+
+.privacy-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0.75rem 0;
+}
+
+.privacy-list li {
+    color: #9aa0a6;
+    font-size: 0.95rem;
+    padding-left: 1.5rem;
+    margin-bottom: 0.5rem;
+    position: relative;
+    line-height: 1.6;
+}
+
+.privacy-list li::before {
+    content: "•";
+    color: #4a6b8a;
+    font-weight: bold;
+    font-size: 1.2rem;
+    position: absolute;
+    left: 0;
+}
+
+.privacy-list li strong {
+    color: #e8eaed;
+}
+
+.privacy-highlight-box {
+    background-color: rgba(74, 107, 138, 0.1);
+    border-left: 3px solid #4a6b8a;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+}
+
+.privacy-highlight-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.privacy-highlight-item:last-child {
+    margin-bottom: 0;
+}
+
+.privacy-icon {
+    width: 24px;
+    height: 24px;
+    color: #4a6b8a;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.privacy-highlight-item div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.privacy-highlight-item strong {
+    color: #e8eaed;
+    font-size: 0.95rem;
+}
+
+.privacy-highlight-item span {
+    color: #9aa0a6;
+    font-size: 0.9rem;
+}
+
+.privacy-contact-box {
+    background-color: rgba(74, 107, 138, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0 0 0;
+}
+
+.privacy-contact-box p {
+    margin: 0.5rem 0;
+    color: #9aa0a6;
+    font-size: 0.95rem;
+}
+
+.privacy-contact-box p:first-child {
+    margin-top: 0;
+}
+
+.privacy-contact-box p:last-child {
+    margin-bottom: 0;
+}
+
+.privacy-link {
+    color: #4a6b8a;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.privacy-link:hover {
+    color: #5a7b9a;
+    text-decoration: underline;
+}
+
+/* ============================================ */
+/* MODAL ACTIONS & BUTTONS */
+/* ============================================ */
+
+#privacyPolicyModal .modal-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+#privacyPolicyModal .modal-button {
+    flex: 1;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#privacyPolicyModal .modal-button-cancel {
+    background-color: transparent;
+    color: #9aa0a6;
+    border: 1px solid #3d5a75;
+}
+
+#privacyPolicyModal .modal-button-cancel:hover {
+    background-color: rgba(74, 107, 138, 0.1);
+    color: #e8eaed;
+}
+
+#privacyPolicyModal .modal-button-confirm {
+    background-color: #4a6b8a;
+    color: white;
+}
+
+#privacyPolicyModal .modal-button-confirm:hover {
+    background-color: #5a7b9a;
+}
+
+#privacyPolicyModal .modal-button-confirm:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ============================================ */
+/* RESPONSIVE DESIGN */
+/* ============================================ */
+
+@media (max-width: 768px) {
+    .privacy-modal-content {
+        max-width: 95% !important;
+        padding: 1.5rem;
+    }
+
+    .privacy-heading {
+        font-size: 1.15rem;
+    }
+
+    .privacy-subheading {
+        font-size: 1rem;
+    }
+
+    .privacy-text,
+    .privacy-list li {
+        font-size: 0.9rem;
+    }
+
+    .privacy-highlight-box {
+        padding: 1rem;
+    }
+
+    .privacy-highlight-item {
+        gap: 0.75rem;
+    }
+
+    .modal-header-with-close {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+
+    .modal-close-button {
+        margin-top: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .privacy-modal-content {
+        padding: 1.25rem;
+    }
+
+    .privacy-heading {
+        font-size: 1.1rem;
+    }
+
+    .privacy-text,
+    .privacy-list li {
+        font-size: 0.85rem;
+    }
+
+    .privacy-list li {
+        padding-left: 1.25rem;
+    }
+
+    .privacy-highlight-item {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .privacy-icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .modal-subtitle {
+        font-size: 0.8rem;
+    }
+}
+
+html.modal-open,
+body.modal-open {
+    overflow: hidden;
+}

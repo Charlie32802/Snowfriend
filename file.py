@@ -4,8 +4,6 @@ Django Project Structure Visualizer
 Shows only important files and directories, excluding common development artifacts
 """
 
-import os
-import sys
 from pathlib import Path
 
 class DjangoProjectVisualizer:
@@ -75,6 +73,15 @@ class DjangoProjectVisualizer:
             'utils',
             'core'
         }
+        
+        # Default max depth - increased to show more levels
+        self.max_depth = 5
+        
+        # Always show these directories completely
+        self.always_show_dirs = {'static', 'templates', 'media'}
+        
+        # Also show subdirectories of these directories
+        self.show_subdirs_of = {'css', 'js', 'images'}
 
     def should_exclude(self, path, name):
         """Check if a file/directory should be excluded"""
@@ -101,31 +108,41 @@ class DjangoProjectVisualizer:
             
         return False
 
-    def is_important(self, name, is_dir=False):
+    def is_important(self, name, is_dir=False, path=None, parent_path=None):
         """Check if a file/directory is important to show"""
+        # Always show Django-specific directories
+        if is_dir and (name in self.always_show_dirs or (parent_path and parent_path.name in self.always_show_dirs)):
+            return True
+            
+        # Show subdirectories of css, js, images
+        if is_dir and parent_path and parent_path.name in self.show_subdirs_of:
+            return True
+            
         if is_dir:
             # Show Django-specific directories
             if name in self.django_specific_dirs:
                 return True
             # Show app directories (typically have models.py, views.py, etc.)
-            if Path(name).joinpath('models.py').exists() or \
-               Path(name).joinpath('views.py').exists() or \
-               Path(name).joinpath('urls.py').exists():
-                return True
+            if path and path.is_dir():
+                # Check for common Django app files
+                app_files = ['models.py', 'views.py', 'apps.py', 'admin.py', 'urls.py']
+                for app_file in app_files:
+                    if (path / app_file).exists():
+                        return True
             return False
         
         # Important files
         if name in self.important_dirs:
             return True
         
-        # Django and Python project files
-        important_extensions = {'.py', '.html', '.css', '.js', '.json', '.yml', '.yaml', 
-                               '.md', '.txt', '.toml', '.ini', '.cfg', '.sh', '.sql'}
+        # Django and Python project files including CSS/JS
+        important_extensions = {'.py', '.html', '.css', '.js', '.scss', '.sass', '.ts', '.json', '.yml', '.yaml', 
+                               '.md', '.txt', '.toml', '.ini', '.cfg', '.sh', '.sql', '.png', '.jpg', '.jpeg', '.gif', '.ico', '.svg'}
         return any(name.endswith(ext) for ext in important_extensions)
 
-    def print_tree(self, directory=None, prefix="", is_last=True, depth=0, max_depth=3):
+    def print_tree(self, directory=None, prefix="", is_last=True, depth=0):
         """Print the directory tree structure"""
-        if depth > max_depth:
+        if depth > self.max_depth:
             return
             
         if directory is None:
@@ -136,10 +153,16 @@ class DjangoProjectVisualizer:
         try:
             for item in sorted(directory.iterdir()):
                 if not self.should_exclude(item, item.name):
-                    # Only show important items at deeper levels
-                    if depth > 0 and not self.is_important(item.name, item.is_dir()):
-                        continue
-                    items.append(item)
+                    # For static, templates, media directories and their subdirs - show all contents
+                    if (directory.name in self.always_show_dirs or 
+                        (directory.parent and directory.parent.name in self.always_show_dirs) or
+                        directory.name in self.show_subdirs_of):
+                        items.append(item)
+                    else:
+                        # Only show important items at deeper levels
+                        if depth > 0 and not self.is_important(item.name, item.is_dir(), item, directory):
+                            continue
+                        items.append(item)
         except (PermissionError, OSError):
             return
         
@@ -163,7 +186,7 @@ class DjangoProjectVisualizer:
             if item.is_dir():
                 # Directory
                 print(f"{prefix}{'└── ' if is_last_item else '├── '}📁 {item.name}/")
-                self.print_tree(item, child_prefix, is_last_item, depth + 1, max_depth)
+                self.print_tree(item, child_prefix, is_last_item, depth + 1)
             else:
                 # File
                 # Get appropriate icon based on file type
@@ -176,7 +199,10 @@ class DjangoProjectVisualizer:
             '.py': '🐍',
             '.html': '🌐',
             '.css': '🎨',
+            '.scss': '🎨',
+            '.sass': '🎨',
             '.js': '📜',
+            '.ts': '📜',
             '.json': '📋',
             '.md': '📖',
             '.txt': '📝',
@@ -187,60 +213,44 @@ class DjangoProjectVisualizer:
             '.sh': '💻',
             '.gitignore': '👁️',
             'dockerfile': '🐳',
-            'requirements.txt': '📦'
+            'requirements.txt': '📦',
+            'manage.py': '⚙️',
+            'settings.py': '⚙️',
+            'urls.py': '🔗',
+            'wsgi.py': '🌐',
+            'asgi.py': '🌐',
+            'models.py': '🗄️',
+            'views.py': '👁️',
+            'admin.py': '👨‍💼',
+            'apps.py': '📱',
+            'tests.py': '🧪',
+            '.png': '🖼️',
+            '.jpg': '🖼️',
+            '.jpeg': '🖼️',
+            '.gif': '🖼️',
+            '.ico': '🖼️',
+            '.svg': '🖼️'
         }
         
+        # Try exact match first
+        if filename.lower() in icons:
+            return icons[filename.lower()]
+        
+        # Try file extension
         for ext, icon in icons.items():
-            if filename.endswith(ext) or filename.lower() == ext:
+            if filename.endswith(ext):
                 return icon
         
         return '📄'
 
-    def print_summary(self):
-        """Print a summary of important Django files"""
-        print("\n" + "="*60)
-        print("📊 DJANGO PROJECT STRUCTURE SUMMARY")
-        print("="*60)
-        
-        important_files = {
-            'Project Configuration': ['manage.py', 'requirements.txt', 'pyproject.toml'],
-            'Django Settings': ['settings.py', 'urls.py', 'wsgi.py', 'asgi.py'],
-            'Application Files': ['models.py', 'views.py', 'admin.py', 'apps.py', 'tests.py'],
-            'Templates & Static': ['templates/', 'static/', 'media/'],
-            'Configuration': ['.env.example', '.gitignore', 'docker-compose.yml']
-        }
-        
-        for category, files in important_files.items():
-            print(f"\n{category}:")
-            for file in files:
-                path = self.root_dir / file
-                if path.exists():
-                    print(f"  ✓ {file}")
-                else:
-                    # Check in subdirectories for some files
-                    if file.endswith('.py'):
-                        found = False
-                        for py_file in self.root_dir.rglob(file):
-                            if py_file.is_file():
-                                print(f"  ✓ {py_file.relative_to(self.root_dir)}")
-                                found = True
-                                break
-                        if not found:
-                            print(f"  ✗ {file} (not found)")
-                    else:
-                        print(f"  ✗ {file} (not found)")
-
-    def visualize(self, show_summary=True):
-        """Main visualization method"""
+    def visualize(self, show_summary=False):
+        """Main visualization method - now without summary by default"""
         print(f"\n📂 Project Root: {self.root_dir}")
         print("="*60)
         print("🌳 Clean Django Project Structure (excluding development artifacts)")
         print("="*60)
         
         self.print_tree()
-        
-        if show_summary:
-            self.print_summary()
 
 def main():
     """Main function"""
@@ -258,13 +268,13 @@ def main():
     parser.add_argument(
         '--depth',
         type=int,
-        default=3,
-        help='Maximum depth to display (default: 3)'
+        default=5,
+        help='Maximum depth to display (default: 5)'
     )
     parser.add_argument(
-        '--no-summary',
+        '--summary',
         action='store_true',
-        help='Do not show the summary section'
+        help='Show the summary section (default: off)'
     )
     parser.add_argument(
         '--all',
@@ -280,11 +290,11 @@ def main():
         visualizer.exclude_dirs.clear()
         visualizer.exclude_files.clear()
     
-    # Override max_depth if specified
-    visualizer.print_tree = lambda d=None, p="", il=True, de=0, md=args.depth: \
-        DjangoProjectVisualizer.print_tree(visualizer, d, p, il, de, md)
+    # Set max depth from command line argument
+    visualizer.max_depth = args.depth
     
-    visualizer.visualize(show_summary=not args.no_summary)
+    # Show visualization with or without summary
+    visualizer.visualize(show_summary=args.summary)
 
 if __name__ == "__main__":
     main()

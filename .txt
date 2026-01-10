@@ -2,6 +2,23 @@ Problems needed to be solve:
 
 1. Maintain Deepseek V3 api with credit balance (future enhancement)
 
-2. UI/UX design in chat page to identify how many messages the users can send before they can chat again tomorrow (in progress)
+2. Create a "Terms of Service" page (planned)
 
-3. Finish the Privacy Policy and Terms of Service (planned)
+3. Make sure Snowfriend can reply a fallback message if ever all api models fail (done)
+
+4. Enhance maximum security in "feedback" (done)
+
+5. Dynamic typing of the api failure fallback messages randomly in the UI chat page responded by Snowfriend (done)
+
+6. Media uploads in the chat with links (done)
+
+7. Reorganizing chat.js's codes into 6 separate js files. (done)
+
+8. Youtube video play icon is not hovering properly at the center but scaling more at the top, right and bottom side,
+left stays unscaled (in progress)
+
+9. Text cursor in the top left and bottom left of each videos detected (in progress)
+
+10. Video thumbnail not close to the title, name of the publisher and description (in progress)
+
+11. Chat container of the video links not the same size as the other textual messages of Snowfriend (planned)

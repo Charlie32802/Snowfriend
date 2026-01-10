@@ -1,5 +1,6 @@
 #services.py
 import os
+import random
 import requests
 import json
 import re
@@ -7,7 +8,7 @@ from typing import Dict, List, Optional, Generator
 from dotenv import load_dotenv
 import time
 
-from .response_generator import ResponseGenerator
+from .response_generator import ResponseGenerator, API_FAILURE_FALLBACKS
 from .context_analyzer import ContextAnalyzer   
 
 load_dotenv()
@@ -16,8 +17,9 @@ load_dotenv()
 class LLMService:
     """
     Intelligent LLM Service with MULTI-MODEL FALLBACK
-    ✅ NEW: Added asterisk replacement and proper list spacing
-    ✅ NEW: Added model artifact removal ([/INST], [/B_INST], etc.)
+    ✅ FIXED: Enhanced artifact removal for <|im_end_id|>, meta-commentary, Session markers
+    ✅ FIXED: Stricter gibberish detection to catch nonsense responses
+    ✅ NEW: Preserves [[EMAIL]] and [[FEEDBACK]] markers for API failure fallbacks
     """
     
     def __init__(self):
@@ -29,23 +31,15 @@ class LLMService:
         self.api_base_url = "https://openrouter.ai/api/v1/chat/completions"
         
         self.models = [
-    # PRIMARY: Latest Mistral-7B-v0.3 (better vocabulary, more coherent)
-    {
-        'name': 'mistralai/Mistral-7B-Instruct-v0.3',
-        'description': 'Mistral 7B v0.3 - Latest with expanded vocabulary (65k tokens)',
-        'max_tokens': 16000,
-        'temperature': 0.7, 
-        'priority': 1
-    },
-    # FALLBACK: Original free Mistral (in case v0.3 has issues)
-    {
-        'name': 'mistralai/mistral-7b-instruct:free',
-        'description': 'Mistral 7B Instruct - Free fallback (original version)',
-        'max_tokens': 8000,
-        'temperature': 1.0,
-        'priority': 2
-    }
-]
+            {
+                'name': 'mistralai/mistral-7b-instruct:free',
+                'description': 'Mistral 7B Instruct - Free',
+                'max_tokens': 8000,
+                'temperature': 1.0,
+                'priority': 1
+            }
+        ]
+        
         self.system_prompt_version = "2.1.0" 
         self.current_model_index = 0
         self.streaming_timeout = 15 
@@ -168,30 +162,87 @@ class LLMService:
         return '\n'.join(fixed_lines)
     
     # ========================================================================
-    # ✅ UPDATED: UNIVERSAL TEXT CLEANING WITH ARTIFACT REMOVAL
+    # ✅ FIXED: UNIVERSAL TEXT CLEANING WITH FALLBACK MARKER PRESERVATION
     # ========================================================================
     
     def _clean_text(self, text: str) -> str:
         """
         Universal text cleaning:
-        - Removes model artifacts ([/INST], [/B_INST], etc.)
+        - ✅ FIXED: Enhanced artifact removal (catches <|im_end_id|>, meta-commentary, Session markers)
+        - ✅ NEW: Preserves [[EMAIL]] and [[FEEDBACK]] markers for API failure fallback messages
+        - ✅ FIXED: Aggressive leading quote removal (all quote types)
         - Removes emojis
         - Replaces asterisks with quotes
-        - Fixes list spacing
+         - Fixes list spacing
         - Cleans whitespace
+        - ✅ FIXED: Stricter gibberish detection
         """
         if not text:
             return ""
+    
+        # ✅ CRITICAL FIX: Remove ALL types of leading quotes FIRST (before any other processing)
+        # This catches: " ' " " ' ' „ ‟ « »
+        leading_quote_chars = ['"', "'", '"', '"', ''', ''', '„', '‟', '«', '»', '`']
+        while text and text[0] in leading_quote_chars:
+            text = text[1:].strip()
+    
+        # Also remove trailing quotes
+        while text and text[-1] in leading_quote_chars:
+            text = text[:-1].strip()
+    
+        has_fallback_markers = '[[EMAIL:' in text or '[[FEEDBACK:' in text
         
-        # ✅ NEW: Remove model artifacts FIRST
+        if has_fallback_markers:
+            # This is a fallback message - only do minimal cleaning
+            print("✓ Detected API fallback message - preserving [[EMAIL]] and [[FEEDBACK]] markers")
+            
+            # Only remove obvious artifacts, but preserve markers
+            text = text.replace('<|im_end|>', '').replace('<|im_end_id|>', '')
+            text = text.replace('<|im_start|>', '')
+            text = text.replace('Session end.', '').replace('Session begin.', '')
+            
+            # Remove emojis
+            text = self._remove_emojis(text)
+            
+            # Basic whitespace cleanup
+            text = ' '.join(text.split())
+            
+            # Return early without aggressive cleaning
+            return text.strip()
+        
+        # ✅ CRITICAL: Check for gibberish FIRST (for non-fallback messages)
+        if self._contains_gibberish(text):
+            print(f"⚠️ Gibberish detected in response: {text[:100]}...")
+            return ""  # Return empty to trigger fallback
+        
+        # ✅ CRITICAL: Remove model artifacts FIRST (EXPANDED LIST)
         artifact_patterns = [
-            r'\[\/(?:INST|B_INST)\]',      # [/INST], [/B_INST]
-            r'\[/.*?\]',                   # Any other [/TAG]
-            r'<s>|<\/s>',                  # <s>, </s>
-            r'^Assistant:\s*',             # "Assistant: " prefix
-            r'^Snowfriend:\s*',            # "Snowfriend: " prefix
-            r'^\s*\(\s*I\'m',              # "( I'm" artifacts
-            r'\[\s*assistant\s*\]',        # [assistant]
+            # Original artifacts
+            r'\[\/(?:INST|B_INST)\]',
+            r'\[/.*?\]',
+            r'<s>|<\/s>',
+            r'^Assistant:\s*',
+            r'^Snowfriend:\s*',
+            r'^\s*\(\s*I\'m',
+            r'\[\s*assistant\s*\]',
+            
+            # ✅ NEW: LLM training artifacts
+            r'<\|im_end(_id)?\|>',  # Catches <|im_end|> and <|im_end_id|>
+            r'<\|im_start\|>',
+            r'<\|.*?\|>',  # Any other special tokens
+            
+            # ✅ NEW: Session markers
+            r'Session\s+(end|begin)\.',
+            r'Session\s+(end|begin)\.<\|im_end_id\|>',
+            
+            # ✅ NEW: Meta-commentary in brackets (these should NEVER appear in user-facing text)
+            r'\[YOU SHOULD\'?VE SAID:.*?\]',
+            r'\[A BETTER RESPONSE WOULD BE:.*?\]',
+            r'\[CORRECT RESPONSE:.*?\]',
+            r'\[NOTE:.*?\]',
+            r'\[IMPORTANT:.*?\]',
+            r'\[INSTEAD:.*?\]',
+            r'\[FIX:.*?\]',
         ]
         
         for pattern in artifact_patterns:
@@ -202,9 +253,22 @@ class LLMService:
         text = text.replace('<s>', '').replace('</s>', '')
         text = text.replace('[assistant]', '').replace('[ASSISTANT]', '')
         text = text.replace('Assistant:', '').replace('Snowfriend:', '')
+        text = text.replace('<|im_end|>', '').replace('<|im_end_id|>', '')
+        text = text.replace('<|im_start|>', '')
+        text = text.replace('Session end.', '').replace('Session begin.', '')
         
         # Remove emojis
         text = self._remove_emojis(text)
+        
+        # ✅ NEW: Remove confusing parenthetical statements
+        confusing_patterns = [
+            r'\(can\'t recall you mentioning it already[^)]*\)',
+            r'\(if the fact is better known\)',
+            r'\(not sure if[^)]*\)',
+        ]
+        
+        for pattern in confusing_patterns:
+            text = re.sub(pattern, '', text, flags=re.IGNORECASE)
         
         # Replace asterisks (preserve disclaimers)
         text = self._replace_asterisks_with_quotes(text)
@@ -217,13 +281,12 @@ class LLMService:
         for line in lines:
             line_stripped = line.strip()
             if line_stripped:
-                # Remove multiple spaces within line
                 line_cleaned = ' '.join(line_stripped.split())
                 cleaned_lines.append(line_cleaned)
                 consecutive_empty = 0
             else:
                 consecutive_empty += 1
-                if consecutive_empty <= 1:  # Allow max 1 empty line
+                if consecutive_empty <= 1:
                     cleaned_lines.append('')
         
         text = '\n'.join(cleaned_lines)
@@ -237,14 +300,77 @@ class LLMService:
         # Remove double punctuation
         text = text.replace('..', '.').replace(',,', ',').replace('??', '?').replace('!!', '!')
         
+        # ✅ NEW: Fix incomplete sentences ending with "or?", "and?", etc.
+        text = re.sub(r',?\s+(or|and|but)\?\s*$', '.', text, flags=re.IGNORECASE)
+        
         # Final cleanup: remove any remaining artifact-like text
         if text.startswith('(') and text.endswith(')'):
-            # Check if it's a valid disclaimer before removing
             if not ("I'm here to listen" in text and "professional" in text):
                 text = text[1:-1].strip()
         
         return text
-
+    
+    def _contains_gibberish(self, text: str) -> bool:
+        """
+        ✅ FIXED: Stricter gibberish detection
+        Returns True if gibberish detected
+        """
+        if not text:
+            return True
+        
+        # ✅ CRITICAL: Must have at least 3 characters
+        if len(text.strip()) < 3:
+            return True
+        
+        # ✅ NEW: Check for known gibberish patterns
+        gibberish_patterns = [
+            r'\bNASR\b',  # Random acronyms
+            r'\bnigga\b',  # Slurs/offensive language
+            r'\bmintysauce\b',  # Nonsense words
+            r'\bnfty\b',  # Random short "words"
+            r'\bThey be knowin\b',  # Broken grammar
+            r'\billuminating when you\'re this well-equipped',  # Nonsense phrases
+        ]
+        
+        for pattern in gibberish_patterns:
+            if re.search(pattern, text, re.IGNORECASE):
+                print(f"⚠️ Gibberish pattern detected: {pattern}")
+                return True
+        
+        # ✅ Check for code-like artifacts (HIGH CONFIDENCE only)
+        code_artifacts = [
+            r'puts\w+\(',  # putsAnnotationLeft(
+            r'console\.',  # console.log
+            r'function\s*\(',  # function(
+            r'=>\s*{',  # arrow function
+        ]
+        
+        for pattern in code_artifacts:
+            if re.search(pattern, text):
+                print(f"⚠️ Code artifact detected: {pattern}")
+                return True
+        
+        # ✅ Check if text is ALL special characters (no letters)
+        has_letters = bool(re.search(r'[a-zA-Z]', text))
+        if not has_letters and len(text) > 5:
+            print(f"⚠️ No letters detected in response")
+            return True
+        
+        # ✅ Check if response is just whitespace or punctuation
+        text_stripped = re.sub(r'[^\w\s]', '', text).strip()
+        if len(text_stripped) < 3:
+            print(f"⚠️ Response is only punctuation/whitespace")
+            return True
+        
+        # ✅ NEW: Check for excessive randomness (random capital letters mid-word)
+        random_caps_pattern = r'\b[a-z]+[A-Z][a-z]+\b'
+        random_caps_count = len(re.findall(random_caps_pattern, text))
+        if random_caps_count >= 3:
+            print(f"⚠️ Excessive random capitalization detected")
+            return True
+        
+        return False
+    
     def _extract_response_from_validation_failure(self, response_text: str) -> Optional[str]:
         """Extract actual response if validation error was prepended"""
         if response_text.startswith('❌') or 'RESPONSE USES ASTERISKS' in response_text:
@@ -254,7 +380,7 @@ class LLMService:
                     return '\n'.join(lines[i:])
             return None
         return response_text
-
+    
     def _remove_unnecessary_parentheses(self, text: str) -> str:
         """Remove parentheses wrapping UNLESS it's the AI disclaimer"""
         if not text:
@@ -277,7 +403,9 @@ class LLMService:
         conversation_history: List[Dict],
         user_name: str = None,
         time_context: Dict = None,
-        max_retries: int = 2
+        max_retries: int = 2,
+        is_developer: bool = False,
+        developer_email: str = None
     ) -> Optional[str]:
         """Generate response with multi-model fallback"""
         if not conversation_history:
@@ -286,11 +414,14 @@ class LLMService:
         last_message = conversation_history[-1]['content']
         context = self.context_analyzer.analyze_message(last_message, conversation_history)
         
-        system_prompt, facts = self.response_generator.create_dynamic_system_prompt(
+        
+        system_prompt, _ = self.response_generator.create_dynamic_system_prompt(
             context=context,
             conversation_history=conversation_history,
             user_name=user_name,
-            time_context=time_context
+            time_context=time_context,
+            is_developer=is_developer,
+            developer_email=developer_email
         )
         
         messages = [
@@ -315,16 +446,22 @@ class LLMService:
                     if response and 'choices' in response:
                         bot_response = response['choices'][0]['message']['content'].strip()
                         
-                        # Clean response (artifacts, emoji, asterisks, spacing)
+                        # ✅ STEP 1: Quality gate - check for gibberish BEFORE cleaning
+                        if self._contains_gibberish(bot_response):
+                            print(f"⚠️ Response failed quality check (gibberish detected, attempt {attempt + 1})")
+                            continue  # Try again
+                        
+                        # ✅ STEP 2: Clean response (artifacts, emoji, asterisks, spacing)
                         bot_response = self._clean_text(bot_response)
                         bot_response = self._extract_response_from_validation_failure(bot_response)
                         bot_response = self._remove_unnecessary_parentheses(bot_response)
                         
-                        if not bot_response:
-                            print(f"⚠️ Response became empty after cleaning")
-                            continue
+                        # ✅ STEP 3: Check if cleaning resulted in empty response
+                        if not bot_response or len(bot_response.strip()) < 3:
+                            print(f"⚠️ Response became empty after cleaning (attempt {attempt + 1})")
+                            continue  # Try again
                         
-                        # Validate
+                        # ✅ STEP 4: Validate
                         is_valid, error_msg = self.response_generator.validate_response(
                             response=bot_response,
                             context=context,
@@ -332,6 +469,7 @@ class LLMService:
                         )
                         
                         if is_valid:
+                            # ✅ STEP 5: Normalize punctuation and return
                             normalized = self.response_generator.normalize_punctuation(
                                 bot_response,
                                 context
@@ -361,11 +499,9 @@ class LLMService:
                         print(f"❌ {model_name} failed, trying next model...")
                         break
         
-        print("❌ All models failed - using fallback response")
-        fallback = self.response_generator.generate_contextual_fallback(
-            context=context,
-            conversation_history=conversation_history
-        )
+        print("❌ All models failed - using API failure fallback")
+        fallback = random.choice(API_FAILURE_FALLBACKS)
+        # ✅ CRITICAL: Don't over-clean fallback messages - preserve markers
         fallback = self._clean_text(fallback)
         return fallback
     
@@ -373,7 +509,9 @@ class LLMService:
         self,
         conversation_history: List[Dict],
         user_name: str = None,
-        time_context: Dict = None
+        time_context: Dict = None,
+        is_developer: bool = False,
+        developer_email: str = None
     ) -> Generator[str, None, None]:
         """Generate streaming response with model fallback"""
         if not conversation_history:
@@ -382,11 +520,13 @@ class LLMService:
         last_message = conversation_history[-1]['content']
         context = self.context_analyzer.analyze_message(last_message, conversation_history)
         
-        system_prompt, facts = self.response_generator.create_dynamic_system_prompt(
+        system_prompt, _ = self.response_generator.create_dynamic_system_prompt(
             context=context,
             conversation_history=conversation_history,
             user_name=user_name,
-            time_context=time_context
+            time_context=time_context,
+            is_developer=is_developer,
+            developer_email=developer_email
         )
         
         messages = [
@@ -411,9 +551,10 @@ class LLMService:
                 ):
                     if chunk:
                         if is_first_chunk:
+                            chunk = chunk.replace('<s>', '').replace('</s>', '')
+                            chunk = chunk.replace('<|im_start|>', '').replace('<|im_end|>', '')
                             chunk = chunk.lstrip()
                             is_first_chunk = False
-                        
                         if chunk:
                             chunk_count += 1
                             full_response += chunk
@@ -616,7 +757,9 @@ class LLMService:
             'streaming_supported': True,
             'emoji_filtering': True,
             'asterisk_replacement': True,
-            'artifact_removal': True  # ✅ New feature
+            'artifact_removal': True,
+            'gibberish_detection': True,
+            'fallback_marker_preservation': True  # ✅ New feature
         }
 
 
@@ -655,6 +798,8 @@ if __name__ == "__main__":
             print(f"  Emoji filtering: {info['emoji_filtering']}")
             print(f"  Asterisk replacement: {info['asterisk_replacement']}")
             print(f"  Artifact removal: {info['artifact_removal']}")
+            print(f"  Gibberish detection: {info['gibberish_detection']}")
+            print(f"  Fallback marker preservation: {info['fallback_marker_preservation']}")
             
             conversation = [
                 {"role": "user", "content": "Hi there!"}
