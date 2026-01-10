@@ -1,9 +1,6 @@
 // ============================================================================
 // CHAT-MESSAGES.JS - MESSAGE HANDLING & STREAMING (COMPLETE FIXED VERSION)
 // ============================================================================
-// ✅ FIXED Issue #1: CSS spacing after page refresh (removed ALL newlines)
-// ✅ FIXED Issue #4: "Snowfriend is typing & searching..." for media requests
-// ============================================================================
 
 // ============================================================================
 // TEXT PROCESSING & CLEANING
@@ -11,59 +8,12 @@
 
 const cleanMessageText = (text) => {
     if (!text) return '';
-
-    const hasMarkers = text.includes('[[EMAIL:') || text.includes('[[FEEDBACK:');
-
-    text = text.replace(/<s>/g, '');  
-    text = text.replace(/<\/s>/g, '');  
-    text = text.replace(/❌.*ASTERISKS.*❌/g, '').trim();
-    text = text.replace(/❌[^\n]*\n?/g, '').trim();
-    text = text.replace(/<\|im_end(_id)?\|>/g, '');
-    text = text.replace(/<\|im_start\|>/g, '');
-    text = text.replace(/Session (end|begin)\./g, '');
-    text = text.replace(/\[YOU SHOULD'?VE SAID:.*?\]/gi, '');
-    text = text.replace(/\[A BETTER RESPONSE WOULD BE:.*?\]/gi, '');
-    text = replaceAsterisksWithQuotes(text);
-
-    if (text.startsWith('(') && text.endsWith(')')) {
-        if (!(text.includes("I'm here to listen") && text.includes("professional"))) {
-            text = text.slice(1, -1).trim();
-        }
-    }
-
-    const lines = text.split('\n');
-    const cleanedLines = [];
-    let consecutiveEmpty = 0;
-
-    for (const line of lines) {
-        const lineStripped = line.trim();
-        if (lineStripped) {
-            const lineCleaned = lineStripped.replace(/\s+/g, ' ');
-            cleanedLines.push(lineCleaned);
-            consecutiveEmpty = 0;
-        } else {
-            consecutiveEmpty++;
-            if (consecutiveEmpty <= 1) {
-                cleanedLines.push('');
-            }
-        }
-    }
-
-    text = cleanedLines.join('\n');
-    text = fixBulletListSpacing(text);
-    text = text.replace(/ +\./g, '.');
-    text = text.replace(/ +\?/g, '?');
-    text = text.replace(/ +!/g, '!');
-    text = text.replace(/ +,/g, ',');
-    text = text.trim();
-
-    if (hasMarkers) {
-        if (!text.includes('[[EMAIL:') && !text.includes('[[FEEDBACK:')) {
-            console.warn('⚠️ Markers were removed during cleaning! This is a bug.');
-        }
-    }
-
-    return text;
+    
+    text = text.replace(/\s+$/g, '');
+    text = text.replace(/^\s+/g, ''); 
+    text = text.replace(/\n{4,}/g, '\n\n\n'); 
+    
+    return text.trim();
 };
 
 const replaceAsterisksWithQuotes = (text) => {
@@ -415,7 +365,7 @@ const appendMessageWithTyping = (text, sender, callback) => {
     const displayText = hasMarkers ? convertMarkersToPlainText(text) : text;
 
     let currentIndex = 0;
-    const typingSpeed = 30;
+    const typingSpeed = 20; 
 
     const typeCharacter = () => {
         if (currentIndex < displayText.length) {
@@ -537,7 +487,7 @@ const addInitialMessage = () => {
     window.scrollToBottom();
 
     let currentIndex = 0;
-    const typingSpeed = 25;
+    const typingSpeed = 20; 
 
     const typeCharacter = () => {
         if (currentIndex < greeting.length) {
@@ -693,7 +643,7 @@ const tryStreaming = async (text, csrftoken, typingIndicator) => {
 const animateTextCharacterByCharacter = (element, text) => {
     return new Promise((resolve) => {
         let currentIndex = 0;
-        const typingSpeed = 30;
+        const typingSpeed = 20; 
         const hasMarkers = text.includes('[[EMAIL:') || text.includes('[[FEEDBACK:');
 
         const displayText = hasMarkers ? convertMarkersToPlainText(text) : text;
@@ -858,4 +808,4 @@ window.appendMessageWithTyping = appendMessageWithTyping;
 window.addInitialMessage = addInitialMessage;
 window.isMediaMessage = isMediaMessage;
 window.renderMediaMessageInstant = renderMediaMessageInstant;
-window.isMediaRequest = isMediaRequest; 
+window.isMediaRequest = isMediaRequest;

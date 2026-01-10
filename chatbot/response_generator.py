@@ -343,9 +343,11 @@ CRITICAL RULES:
 
 🚨 IDENTITY AWARENESS FOR MARC:
 - Marc IS the developer (not "the developer" as a third party)
-- When Marc asks about creating you, acknowledge HIM directly: "You created this system, Marc"
+- When Marc asks about creating you, acknowledge HIM directly and simply
 - NEVER refer to Marc in third person when talking TO Marc
 - Be CONFIDENT about his identity - no "if you're Marc" uncertainty
+- Keep recognition responses clear, direct, and conversational
+- Avoid convoluted or unclear phrasing when acknowledging his role
 - See the base "HOW DO YOU KNOW?" section for proper response patterns
 
 ✅ IDENTITY VERIFICATION RESPONSES:
@@ -704,6 +706,15 @@ CORE LANGUAGE RULES - SPEAK CASUALLY LIKE A FRIEND:
 - Clarify immediately if users express confusion
 - Use natural friend language for inquiries and support
 - Keep responses appropriately brief for the context
+
+🚨 FORMATTING MULTI-STEP CONTENT:
+When providing multiple suggestions, ideas, or sequential steps:
+- Use numbered lists for sequential processes or ordered steps
+- Use bullet points for unordered options, ideas, or alternatives
+- Keep each list item concise and scannable
+- Never bury multiple actionable items in dense paragraphs
+- Structure lists with brief introductory and closing sentences
+- Each list entry should stand alone as a complete thought
 
 **Response Length Guidelines:**
 - Greetings and acknowledgments: Very brief
@@ -1571,79 +1582,58 @@ The goal is a warm, flexible greeting that invites conversation.
                 if not ('❌' in line or 'ASTERISKS' in line):
                     cleaned_lines.append(line)
             response = '\n'.join(cleaned_lines).strip()
-        
+    
         # ✅ Remove unnecessary parentheses wrapping (unless AI disclaimer)
         if response.startswith('(') and response.endswith(')'):
             if not ("I'm here to listen" in response and "professional" in response):
                 response = response[1:-1].strip()
-        
+    
         # Clean up excessive whitespace
         response = re.sub(r' +\n', '\n', response)  # Remove trailing spaces before newlines
         response = re.sub(r'\n{3,}', '\n\n', response)  # Max 2 consecutive newlines
         response = re.sub(r' {2,}', ' ', response)  # Remove multiple spaces
-        
+    
         # Clean up punctuation spacing
         response = re.sub(r' +\.', '.', response)  # Remove space before period
         response = re.sub(r' +\?', '?', response)  # Remove space before question mark
         response = re.sub(r' +!', '!', response)  # Remove space before exclamation
         response = re.sub(r' +,', ',', response)  # Remove space before comma
-        
+    
         # Fix punctuation repetition
         response = re.sub(r'\.{2,}(?!\.)', '.', response)  # Fix double periods (except ellipsis)
         response = re.sub(r'\?{2,}', '?', response)
         response = re.sub(r'!{2,}', '!', response)
         response = re.sub(r',{2,}', ',', response)
-        
+    
         # Fix spacing after punctuation
         response = re.sub(r'\.(?=[A-Z])', '. ', response)  # Add space after period before capital
         response = re.sub(r'\?(?=[A-Z])', '? ', response)  # Add space after ? before capital
         response = re.sub(r'!(?=[A-Z])', '! ', response)  # Add space after ! before capital
-        
+    
         # ✅ FIX: Remove extra space at the start of lines
         lines = response.split('\n')
         cleaned_lines = [line.strip() if line.strip() else '' for line in lines]
         response = '\n'.join(cleaned_lines)
-        
+    
         # Final cleanup
         response = response.strip()
 
-        # ✅ CRITICAL FIX: More comprehensive patterns for suggestion statements
-        statement_patterns = [
-            # Direct suggestions/commands
-            (r'(call|reach out to|contact) (them|someone|help)\s*\?', '.'),
-            (r'(come back|return) anytime\s*\?', '.'),
-            (r'(take care|be safe|stay safe)\s*\?', '.'),
-            (r'(you can do this|you\'ve got this)\s*\?', '.'),
-            (r'(that takes|that requires) \w+\s*\?', '.'),
-            (r'(please|promise) \w+\s*\?', '.'),
-            (r'i\'m here (anytime|whenever)\s*\?', '.'),
-            
-            # "Like" statements
-            (r'like (things|are|is|seem|feel).{1,30}\?', '.'),
-            (r'sounds? like .{1,30}\?', '.'),
-            (r'seems? like .{1,30}\?', '.'),
-            
-            # Suggestions with "could/might"
-            (r'(you could|could) (try|talk|speak).{1,50}\?', '.'),
-            (r'(try|consider) (talking|speaking|reaching out).{1,50}\?', '.'),
-            
-            # ✅ NEW: "help" patterns (more general)
-            (r'(would|might|could|may) help\s+\w+.{0,50}\?', '.'),  # "would help bridge..."
-            (r'help (you|them|us|bridge|with|to).{0,50}\?', '.'),    # "help bridge that gap"
-            
-            # ✅ NEW: Keeping/maintaining patterns
-            (r'(keeping|maintaining|having|getting) \w+.{0,40}\?', '.'),  # "keeping an umbrella"
-            
-            # ✅ NEW: Modal verbs in suggestions
-            (r'(maybe|perhaps|possibly) \w+.{0,50}\?', '.'),  # "maybe keeping..."
+        # ✅ UNIVERSAL FIX: Detect suggestion statements (not questions)
+        suggestion_indicators = [
+            r'\b(maybe|perhaps|possibly|consider|try|might want to|could|would)\b.*\?$',
+            r'\b(treat yourself|reach out|talk to|speak with|call|contact)\b.*\?$',
+            r'\b(help|ease|bridge|maintain|keep)\b.*\?$',
         ]
+    
+        for pattern in suggestion_indicators:
+            if re.search(pattern, response, re.IGNORECASE):
+                # Check if it's a genuine question (has question words)
+                has_question_word = bool(re.search(r'\b(what|who|when|where|why|how|which)\b', response, re.IGNORECASE))
+                if not has_question_word:
+                    response = re.sub(r'\?$', '.', response)
+                    break    
 
         normalized = response
-
-        for pattern, replacement_end in statement_patterns:
-            match = re.search(pattern, normalized, re.IGNORECASE)
-            if match:
-                normalized = re.sub(r'\?' + r'$', replacement_end, normalized)
 
         if context.urgency_level in ['crisis', 'high'] or context.emotional_tone == 'crisis':
             if not re.search(r'(what|who|when|where|why|how)\b', normalized.lower()):
@@ -1656,7 +1646,7 @@ The goal is a warm, flexible greeting that invites conversation.
         if context.emotional_tone == 'negative':
             normalized = re.sub(r'\.{3,}', '...', normalized)
             normalized = re.sub(r'(sad|hard|tough|difficult)\.{2,}', r'\1.', normalized)
-        
+    
         elif context.emotional_tone == 'positive':
             exclamation_count = normalized.count('!')
             if exclamation_count > 3:
@@ -1668,13 +1658,13 @@ The goal is a warm, flexible greeting that invites conversation.
                     else:
                         normalized_parts.append(sentence.strip() + '.')
                 normalized = ' '.join(normalized_parts)
-        
+    
         filipino_patterns = [
             (r'\.{4,}', '...'),
             (r'\!{3,}', '!!'),
             (r'\?{2,}', '?'),
         ]
-        
+    
         for pattern, replacement in filipino_patterns:
             normalized = re.sub(pattern, replacement, normalized)
 
@@ -1753,6 +1743,24 @@ The goal is a warm, flexible greeting that invites conversation.
         
         question_count = response.count('?')
         user_word_count = len(user_message.split())
+        
+        if question_count > 0:
+            sentences = [s.strip() for s in response.split('.') if s.strip()]
+        
+            # If response has 2+ sentences and last sentence is a question
+            if len(sentences) >= 2 and response.rstrip().endswith('?'):
+                # Check if second-to-last sentence is a complete, strong statement
+                penultimate = sentences[-2] if len(sentences) >= 2 else ""
+            
+                # Strong ending indicators (statement is already complete)
+                strong_endings = [
+                    r'\b(remember|just know|keep in mind|the important thing)\b',
+                    r'\b(doesn\'?t mean|doesn\'?t make you)\b',
+                    r'\b(you\'?re (not|never)|it\'?s (okay|normal|natural))\b',
+                ]
+            
+                if any(re.search(pattern, penultimate, re.IGNORECASE) for pattern in strong_endings):
+                    return False, "Response already has strong ending - additional question undermines it"
         
         # Rule 1: NO questions if user gave detailed message (15+ words)
         if question_count > 0 and user_word_count >= 15:

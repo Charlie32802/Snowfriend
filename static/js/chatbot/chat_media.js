@@ -1,9 +1,7 @@
 // ============================================================================
-// CHAT-MEDIA.JS - MEDIA SEARCH & DISPLAY (COMPLETE FIXED VERSION)
+// CHAT-MEDIA.JS - MEDIA SEARCH & DISPLAY
 // ============================================================================
 // Handles YouTube video search, image search, and media result display
-// ✅ NO DUPLICATES - All media functions defined here
-// ✅ REMOVED: showMediaLoading() - unused function removed
 // ============================================================================
 
 
@@ -293,7 +291,7 @@ function createVideoCard(video) {
 async function typeTextSafe(element, text) {
     if (!element || !text) return;
 
-    const typingSpeed = 30;
+    const typingSpeed = 20; 
     const textSpan = document.createElement('span');
     element.appendChild(textSpan);
 

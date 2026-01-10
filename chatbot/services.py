@@ -167,29 +167,35 @@ class LLMService:
     
     def _clean_text(self, text: str) -> str:
         """
-        Universal text cleaning:
+        Universal text cleaning with intelligent instruction leak detection
+        - ✅ NEW: Intelligent instruction leak detector (catches ANY prompt leaks)
         - ✅ FIXED: Enhanced artifact removal (catches <|im_end_id|>, meta-commentary, Session markers)
         - ✅ NEW: Preserves [[EMAIL]] and [[FEEDBACK]] markers for API failure fallback messages
         - ✅ FIXED: Aggressive leading quote removal (all quote types)
         - Removes emojis
         - Replaces asterisks with quotes
-         - Fixes list spacing
+        - Fixes list spacing
         - Cleans whitespace
         - ✅ FIXED: Stricter gibberish detection
         """
         if not text:
             return ""
+        
+        text = re.sub(r'<\/?[a-z_]+(?:\|[a-z_]+)*>', '', text, flags=re.IGNORECASE)
+        text = re.sub(r'<\|[^>]+\|>', '', text)
     
-        # ✅ CRITICAL FIX: Remove ALL types of leading quotes FIRST (before any other processing)
-        # This catches: " ' " " ' ' „ ‟ « »
+        # ✅ NEW: STEP 1 - Detect and remove leaked instructions FIRST
+        text = self._remove_leaked_instructions(text)
+    
+        # ✅ STEP 2: Remove ALL types of leading quotes
         leading_quote_chars = ['"', "'", '"', '"', ''', ''', '„', '‟', '«', '»', '`']
         while text and text[0] in leading_quote_chars:
             text = text[1:].strip()
-    
+
         # Also remove trailing quotes
         while text and text[-1] in leading_quote_chars:
             text = text[:-1].strip()
-    
+
         has_fallback_markers = '[[EMAIL:' in text or '[[FEEDBACK:' in text
         
         if has_fallback_markers:
@@ -308,6 +314,121 @@ class LLMService:
             if not ("I'm here to listen" in text and "professional" in text):
                 text = text[1:-1].strip()
         
+        return text
+    
+    def _remove_leaked_instructions(self, text: str) -> str:
+        """
+        ✅ INTELLIGENT INSTRUCTION LEAK DETECTOR
+    
+        Detects when LLM starts leaking system prompt instructions
+        and cuts off the response at that point.
+    
+        Detection signals:
+        - High density of instruction keywords (MUST, NEVER, CRITICAL, etc.)
+        - Presence of formatting markers (⚠️, 🚨, ✅, ❌)
+        - Numbered/bulleted rule lists
+        - Meta-commentary about response format
+        - Sudden shift from conversational to instructional tone
+        """
+        if not text or len(text) < 50:
+            return text
+        
+        text = re.sub(r'\n*```\s*$', '', text) 
+        text = re.sub(r'^```\s*\n*', '', text)
+    
+        # Split into paragraphs (double newline separated)
+        paragraphs = text.split('\n\n')
+    
+        # Analyze each paragraph for "instruction-like" characteristics
+        cleaned_paragraphs = []
+        found_leak = False
+    
+        for i, para in enumerate(paragraphs):
+            para_stripped = para.strip()
+        
+            if not para_stripped:
+                cleaned_paragraphs.append('')
+                continue
+        
+            # Calculate "instruction score" for this paragraph
+            instruction_score = 0
+        
+            # Signal 1: Instruction keywords (high weight)
+            instruction_keywords = [
+                'CRITICAL', 'MUST', 'NEVER', 'ALWAYS', 'REQUIRED', 'FORBIDDEN',
+                'IMPORTANT', 'MANDATORY', 'STRICTLY', 'ABSOLUTELY', 'DO NOT',
+                'YOU SHOULD', 'YOU MUST', 'ENSURE', 'MAKE SURE', 'REMEMBER TO'
+            ]
+            keyword_count = sum(1 for keyword in instruction_keywords if keyword in para_stripped.upper())
+            instruction_score += keyword_count * 3
+        
+            # Signal 2: Warning emojis (medium weight)
+            warning_emojis = ['⚠️', '🚨', '✅', '❌', '🔒', '📋', '🎯']
+            emoji_count = sum(1 for emoji in warning_emojis if emoji in para_stripped)
+            instruction_score += emoji_count * 2
+        
+             # Signal 3: Numbered rules pattern (high weight)
+            if re.search(r'^\s*\d+[\.\)]\s+', para_stripped, re.MULTILINE):
+                instruction_score += 4
+        
+            # Signal 4: "Rules" or "Guidelines" headings (high weight)
+            rule_headings = [
+                'RULES:', 'GUIDELINES:', 'INSTRUCTIONS:', 'REQUIREMENTS:',
+                'CONSTRAINTS:', 'PRINCIPLES:', 'WHAT TO DO NEXT:'
+            ]
+            if any(heading in para_stripped.upper() for heading in rule_headings):
+                instruction_score += 5
+        
+            # Signal 5: Meta-commentary brackets (high weight)
+            if re.search(r'\[(CORRECT|WRONG|NOTE|IMPORTANT|FIX|INSTEAD)\]', para_stripped, re.IGNORECASE):
+                instruction_score += 4
+        
+            # Signal 6: Excessive capitalization (medium weight)
+            words = para_stripped.split()
+            if len(words) > 5:
+                caps_ratio = sum(1 for word in words if word.isupper() and len(word) > 2) / len(words)
+                if caps_ratio > 0.3:
+                    instruction_score += 3
+        
+            # Signal 7: Colon-separated directives (medium weight)
+            directive_pattern = r'^[A-Z][a-z\s]+:\s*$'
+            if re.search(directive_pattern, para_stripped, re.MULTILINE):
+                instruction_score += 2
+        
+             # Signal 8: Position in response (context weight)
+            if i > 2:  # After the first 2 paragraphs
+                instruction_score += 1
+        
+            # ✅ DECISION THRESHOLD
+            if instruction_score >= 8:
+                print(f"⚠️ Instruction leak detected (score: {instruction_score})")
+                print(f"   Truncating at: '{para_stripped[:80]}...'")
+                found_leak = True
+                break
+        
+            # Borderline check
+            elif instruction_score >= 5:
+                conversational_markers = [
+                    "I understand", "I hear", "I'm here", "You", "your", 
+                    "sounds like", "seems like", "that's", "I think"
+                ]
+                has_conversational_tone = any(
+                    marker.lower() in para_stripped.lower() 
+                    for marker in conversational_markers
+                )
+            
+                if not has_conversational_tone:
+                    print(f"⚠️ Borderline instruction leak detected (score: {instruction_score})")
+                    print(f"   Truncating at: '{para_stripped[:80]}...'")
+                    found_leak = True
+                    break
+        
+            # This paragraph is safe
+            cleaned_paragraphs.append(para)
+    
+        if found_leak:
+            return '\n\n'.join(cleaned_paragraphs).strip()
+    
         return text
     
     def _contains_gibberish(self, text: str) -> bool:

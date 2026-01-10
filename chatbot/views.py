@@ -1486,10 +1486,15 @@ Generate ONLY the title (no quotes, no explanation):"""
                 time_context=None,
                 max_retries=1
             )
-            
+
+            # ✅ Detect API failure messages
+            if llm_title and ('[[EMAIL:' in llm_title or '[[FEEDBACK:' in llm_title):
+                print("⚠️ API failure detected - using hardcoded fallback")
+                raise ValueError("API failure response")
+
             if llm_title:
                 llm_title = llm_title.replace('"', '').replace("'", '').strip()
-                
+        
                 # Validate title doesn't hallucinate topics
                 title_lower = llm_title.lower()
                 all_known_topics = [
@@ -1499,19 +1504,19 @@ Generate ONLY the title (no quotes, no explanation):"""
                     'pets', 'weather', 'sleep', 'mental health', 'home life', 
                     'stress', 'loneliness'
                 ]
-                
+        
                 detected_topics_lower = [t.lower() for t in topics]
                 for known_topic in all_known_topics:
                     if known_topic in title_lower and known_topic not in detected_topics_lower:
                         print(f"⚠️ LLM hallucinated topic '{known_topic}' - using fallback")
                         raise ValueError(f"Title mentions undetected topic: {known_topic}")
-                
+        
                 if len(llm_title) > 55:
                     llm_title = llm_title[:52] + "..."
-                
+        
                 title = f"{llm_title} - {date_str}"
                 return JsonResponse({'success': True, 'title': title})
-        
+            
         except Exception as llm_error:
             print(f"⚠️ LLM title generation failed: {str(llm_error)}")
         

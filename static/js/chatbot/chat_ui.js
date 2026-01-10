@@ -2,7 +2,6 @@
 // CHAT-UI.JS - UI HELPER FUNCTIONS & UTILITIES
 // ============================================================================
 // Handles UI elements: scroll, notifications, timestamps, avatars, buttons
-// ✅ FIXED: Smart scroll detection - respects user scroll position
 // ============================================================================
 
 // ============================================================================
