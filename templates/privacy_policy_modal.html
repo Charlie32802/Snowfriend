@@ -1,0 +1,565 @@
+{% load static %}
+
+<!-- Privacy Policy Modal -->
+<div class="modal-overlay" id="privacyPolicyModal" style="display: none;">
+    <div class="modal-content privacy-modal-content">
+        <div class="modal-header-with-close">
+            <h2 class="modal-title">Privacy Policy</h2>
+            <button type="button" class="modal-close-button" id="closePrivacyModal" aria-label="Close">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+
+        <p class="modal-subtitle">Last updated: March 25, 2026</p>
+
+        <div class="privacy-content">
+            <!-- Introduction -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Introduction</h3>
+                <p class="privacy-text">
+                    Welcome to Snowfriend. We are committed to protecting your privacy and providing a safe, 
+                    supportive environment for mental wellness and personal reflection. This Privacy Policy 
+                    explains how we collect, use, and protect your information.
+                </p>
+                <p class="privacy-text">
+                    <strong>Important:</strong> Snowfriend is an AI-powered companion, not a substitute for 
+                    professional mental health care. For emergencies or serious concerns, please contact 
+                    qualified professionals or crisis services.
+                </p>
+            </section>
+
+            <!-- Information We Collect -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Information We Collect</h3>
+                
+                <div class="privacy-subsection">
+                    <h4 class="privacy-subheading">Account Information</h4>
+                    <ul class="privacy-list">
+                        <li>Full name (required for account creation)</li>
+                        <li>Email address (for account login, password recovery, and account notifications)</li>
+                        <li>Username (automatically generated from email)</li>
+                        <li>Password (encrypted using Argon2 secure hashing)</li>
+                        <li>Account creation and last login timestamps</li>
+                    </ul>
+                </div>
+
+                <div class="privacy-subsection">
+                    <h4 class="privacy-subheading">Conversation Data</h4>
+                    <ul class="privacy-list">
+                        <li>Messages you send to Snowfriend</li>
+                        <li>AI-generated responses from Snowfriend</li>
+                        <li>Conversation timestamps</li>
+                        <li>Topics discussed (stored for conversation continuity)</li>
+                        <li>Your first name (used to personalize responses)</li>
+                    </ul>
+                </div>
+
+                <div class="privacy-subsection">
+                    <h4 class="privacy-subheading">Media Search Data</h4>
+                    <ul class="privacy-list">
+                        <li>Search queries when you request videos or images (e.g., "stress management tips")</li>
+                        <li>Media content preferences and topics of interest</li>
+                        <li>Timestamps of media searches</li>
+                        <li><strong>Note:</strong> Your name and email are NOT sent to media providers</li>
+                    </ul>
+                </div>
+
+                <div class="privacy-subsection">
+                    <h4 class="privacy-subheading">Security & Usage Information</h4>
+                    <ul class="privacy-list">
+                        <li>Login timestamps and authentication attempts</li>
+                        <li>Failed login attempts (tracked for security)</li>
+                        <li>Session activity and duration</li>
+                        <li>Message count and rate limits (15 messages per day with hourly reset)</li>
+                        <li>IP address (hashed with SHA-256 + salt for rate limiting)</li>
+                        <li>Timezone information (for time-aware responses)</li>
+                        <li>Password change history (last 3 password hashes - encrypted)</li>
+                    </ul>
+                </div>
+
+                <div class="privacy-subsection">
+                    <h4 class="privacy-subheading">Feedback & Support</h4>
+                    <ul class="privacy-list">
+                        <li>Anonymous feedback submissions (ratings, comments)</li>
+                        <li>Optional images attached to feedback (metadata removed, max 5MB)</li>
+                        <li>Hashed IP address (for spam prevention - SHA-256)</li>
+                        <li>Submission timestamps</li>
+                        <li>No personally identifiable information required for feedback</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- How We Use Your Information -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">How We Use Your Information</h3>
+                <p class="privacy-text">We use your information to:</p>
+                <ul class="privacy-list">
+                    <li><strong>Provide our service:</strong> Enable conversations, maintain context, and personalize responses using your first name</li>
+                    <li><strong>Search for helpful content:</strong> Use your search queries to find relevant videos and images from YouTube and Pexels</li>
+                    <li><strong>Provide time-aware responses:</strong> Detect your timezone to offer contextually appropriate greetings (e.g., "Good morning")</li>
+                    <li><strong>Ensure account security:</strong> 
+                        <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                            <li>Track failed login attempts to prevent unauthorized access</li>
+                            <li>Enforce password strength requirements</li>
+                            <li>Prevent password reuse (last 3 passwords)</li>
+                            <li>Manage session timeouts and automatic logouts</li>
+                        </ul>
+                    </li>
+                    <li><strong>Prevent abuse and spam:</strong>
+                        <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                            <li>Rate limit login attempts, registrations, and password resets</li>
+                            <li>Rate limit feedback submissions</li>
+                            <li>Detect and block suspicious activity</li>
+                            <li>Hash IP addresses for spam prevention</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ensure safety:</strong> Detect crisis situations and log concerning patterns for review</li>
+                    <li><strong>Send essential communications:</strong> Welcome emails, password reset links, and account notifications</li>
+                    <li><strong>Improve Snowfriend:</strong> Use anonymous, aggregated data to enhance the experience</li>
+                </ul>
+            </section>
+
+            <!-- AI and Third-Party Services -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">AI Processing & Third-Party Services</h3>
+                
+                    <div class="privacy-highlight-box">
+                        <p class="privacy-text" style="margin-bottom: 0.75rem;">
+                            <strong>How Your Conversations Are Processed:</strong>
+                        </p>
+                        <ul class="privacy-list">
+                            <li>Snowfriend uses AI language models provided by <strong>Groq</strong> to generate responses</li>
+                            <li>Your conversation messages are sent to Groq's API for processing</li>
+                            <li><strong>Your first name</strong> is included in requests to personalize responses</li>
+                            <li>If the primary service is unavailable, a <strong>local backup model</strong> on our own servers is used instead</li>
+                            <li>We use industry-standard API security (HTTPS, authentication tokens)</li>
+                            <li>No email address or full name is sent to AI providers</li>
+                        </ul>
+                    </div>
+
+                    <p class="privacy-text">
+                        For more information about Groq's privacy practices, visit:
+                        <a href="https://groq.com/privacy-policy/" target="_blank" class="privacy-link">groq.com/privacy-policy</a>
+                    </p>
+
+                <div class="privacy-highlight-box" style="margin-top: 1.5rem;">
+                    <p class="privacy-text" style="margin-bottom: 0.75rem;">
+                        <strong>Media Content Providers:</strong>
+                    </p>
+                    <ul class="privacy-list">
+                        <li>When you request videos or images, Snowfriend searches using <strong>YouTube Data API v3</strong> and <strong>Pexels API</strong></li>
+                        <li>Your search queries (e.g., "healthy relationships advice") are sent to these services</li>
+                        <li><strong>Your name, email, and conversation history are NOT shared</strong> with media providers</li>
+                        <li>Only the search query itself is transmitted</li>
+                        <li>Media searches are subject to YouTube's and Pexels' respective privacy policies</li>
+                    </ul>
+                </div>
+
+                <p class="privacy-text" style="margin-top: 0.75rem;">
+                    External Privacy Policies:
+                </p>
+                <ul class="privacy-list">
+                    <li>YouTube Privacy Policy: <a href="https://policies.google.com/privacy" target="_blank" class="privacy-link">policies.google.com/privacy</a></li>
+                    <li>Pexels Privacy Policy: <a href="https://www.pexels.com/privacy-policy/" target="_blank" class="privacy-link">pexels.com/privacy-policy</a></li>
+                </ul>
+            </section>
+
+            <!-- Email Communications -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Email Communications</h3>
+                <p class="privacy-text">We send emails for essential account functions only:</p>
+                <ul class="privacy-list">
+                    <li><strong>Welcome Email:</strong> Sent when you create your account</li>
+                    <li><strong>Password Reset:</strong> Sent when you request to reset your password (link expires in 24 hours)</li>
+                    <li><strong>Security Alerts:</strong> In the future, we may notify you of suspicious account activity</li>
+                </ul>
+                <div class="privacy-highlight-box" style="margin-top: 1rem;">
+                    <p class="privacy-text">
+                        <strong>Email Security:</strong>
+                    </p>
+                    <ul class="privacy-list">
+                        <li>All emails are sent via secure SMTP with TLS encryption</li>
+                        <li>Email sending has a 10-second timeout for security</li>
+                        <li>We use Gmail's SMTP server for reliable delivery</li>
+                        <li>Email addresses are never shared with third parties</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Account Security Features -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Account Security Features</h3>
+                <div class="privacy-highlight-box">
+                    <p class="privacy-text" style="margin-bottom: 0.75rem;">
+                        <strong>We implement multiple layers of security to protect your account:</strong>
+                    </p>
+                    
+                    <h4 class="privacy-subheading" style="margin-top: 1rem;">Password Security</h4>
+                    <ul class="privacy-list">
+                        <li><strong>Argon2 Encryption:</strong> Most secure password hashing algorithm available</li>
+                        <li><strong>Password Requirements:</strong> Minimum 8 characters with uppercase, lowercase, numbers, and special characters</li>
+                        <li><strong>Common Password Blocking:</strong> System prevents use of commonly compromised passwords</li>
+                        <li><strong>Password History:</strong> Prevents reuse of your last 3 passwords for enhanced security</li>
+                        <li><strong>Sequential Character Detection:</strong> Blocks passwords with predictable patterns (e.g., "12345", "abcde")</li>
+                    </ul>
+
+                    <h4 class="privacy-subheading" style="margin-top: 1rem;">Login Protection</h4>
+                    <ul class="privacy-list">
+                        <li><strong>Failed Attempt Tracking:</strong> Maximum 5 failed login attempts allowed</li>
+                        <li><strong>Account Lockout:</strong> 15-minute lockout after maximum failed attempts</li>
+                        <li><strong>Dual Tracking:</strong> Monitors both IP address and account for suspicious activity</li>
+                        <li><strong>Auto-Clear:</strong> Failed attempt counter resets upon successful login</li>
+                    </ul>
+
+                    <h4 class="privacy-subheading" style="margin-top: 1rem;">Session Management</h4>
+                    <ul class="privacy-list">
+                        <li><strong>Session Timeout:</strong> Automatic logout after 1 hour of inactivity</li>
+                        <li><strong>Browser Close:</strong> Sessions automatically expire when browser is closed</li>
+                        <li><strong>Password Reset:</strong> All active sessions invalidated when password is changed</li>
+                        <li><strong>Secure Cookies:</strong> HTTPS-only, HTTP-only, SameSite strict cookies</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Rate Limiting & Anti-Abuse -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Rate Limiting & Anti-Abuse Measures</h3>
+                <p class="privacy-text">To prevent spam and abuse, we enforce the following limits:</p>
+                
+                <div class="privacy-highlight-box">
+                    <h4 class="privacy-subheading">Authentication Limits</h4>
+                    <ul class="privacy-list">
+                        <li><strong>Login:</strong> Maximum 5 attempts before 15-minute lockout</li>
+                        <li><strong>Registration:</strong> Maximum 3 accounts per IP per hour, 5 per day</li>
+                        <li><strong>Password Reset:</strong> Maximum 3 requests per IP per hour, 5 per email per day</li>
+                    </ul>
+
+                    <h4 class="privacy-subheading" style="margin-top: 1rem;">Message Limits</h4>
+                    <ul class="privacy-list">
+                        <li><strong>Daily Limit:</strong> 15 messages per user per day</li>
+                        <li><strong>Reset Schedule:</strong> Message limits reset every hour on the hour (e.g., if you use all messages at 2:30 PM, you get 15 new messages at 3:00 PM)</li>
+                        <li><strong>Countdown Timer:</strong> Real-time countdown displays exactly when your messages will reset</li>
+                        <li><strong>Status Tracking:</strong> Message counter updates automatically showing remaining messages</li>
+                        <li><strong>Input Restrictions:</strong> Message input and send button are disabled when limit is reached</li>
+                    </ul>
+
+                    <h4 class="privacy-subheading" style="margin-top: 1rem;">Feedback Limits</h4>
+                    <ul class="privacy-list">
+                        <li><strong>Per Minute:</strong> 1 submission maximum</li>
+                        <li><strong>Per Hour:</strong> 5 submissions maximum</li>
+                        <li><strong>Per Day:</strong> 3 submissions maximum</li>
+                    </ul>
+
+                    <h4 class="privacy-subheading" style="margin-top: 1rem;">Suspicious Activity Detection</h4>
+                    <ul class="privacy-list">
+                        <li>System automatically detects XSS, SQL injection, and command injection attempts</li>
+                        <li>IP addresses generating 3+ suspicious patterns are blocked for 1 hour</li>
+                        <li>All suspicious activity is logged for security review</li>
+                        <li>Content sanitization removes potentially harmful code from all inputs</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Time & Location Data -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Time & Location Data</h3>
+                <div class="privacy-highlight-box">
+                    <p class="privacy-text">
+                        <strong>Timezone Detection:</strong>
+                    </p>
+                    <ul class="privacy-list">
+                        <li>Snowfriend detects your timezone to provide time-appropriate responses (e.g., "Good evening" instead of "Good morning")</li>
+                        <li>Timezone is inferred from your device settings or IP address</li>
+                        <li><strong>No precise location data</strong> (GPS coordinates, street address, etc.) is collected or stored</li>
+                        <li>Only general timezone information (e.g., "Asia/Manila") is used</li>
+                        <li>This feature improves conversation quality by making responses contextually relevant</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Data Security -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Data Security</h3>
+                <div class="privacy-highlight-box">
+                    <div class="privacy-highlight-item">
+                        <svg class="privacy-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="2"/>
+                            <path d="M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V11" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <div>
+                            <strong>Password Security:</strong>
+                            <span>Passwords are hashed using Argon2, the most secure algorithm available. Previous password hashes (last 3) are stored encrypted to prevent password reuse.</span>
+                        </div>
+                    </div>
+                    <div class="privacy-highlight-item">
+                        <svg class="privacy-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2"/>
+                            <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <div>
+                            <strong>HTTPS Encryption:</strong>
+                            <span>Data transmitted between your browser and our servers is encrypted in transit using TLS</span>
+                        </div>
+                    </div>
+                    <div class="privacy-highlight-item">
+                        <svg class="privacy-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 21V5C16 3.89543 15.1046 3 14 3H10C8.89543 3 8 3.89543 8 5V21" stroke="currentColor" stroke-width="2"/>
+                            <path d="M3 21H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <div>
+                            <strong>No Third-Party Sharing:</strong>
+                            <span>We do not sell or share your conversations with third parties</span>
+                        </div>
+                    </div>
+                    <div class="privacy-highlight-item">
+                        <svg class="privacy-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 12L11 14L15 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <div>
+                            <strong>CSRF Protection:</strong>
+                            <span>All forms are protected against cross-site request forgery attacks</span>
+                        </div>
+                    </div>
+                    <div class="privacy-highlight-item">
+                        <svg class="privacy-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 15V17M12 7V13M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <div>
+                            <strong>Administrative Access Controls:</strong>
+                            <span>Administrator access is restricted to whitelisted IP addresses only. All admin actions are logged with timestamps and IP addresses. Admin sessions timeout after 15 minutes (stricter than regular user sessions).</span>
+                        </div>
+                    </div>
+                    <div class="privacy-highlight-item">
+                        <svg class="privacy-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 12L11 14L15 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <div>
+                            <strong>IP Address Hashing:</strong>
+                            <span>IP addresses are hashed using SHA-256 with a unique salt for rate limiting and abuse prevention. Original IP addresses are not stored.</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Logging & Monitoring -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Logging & Monitoring</h3>
+                <p class="privacy-text">
+                    We maintain comprehensive security logs to protect your account and improve our services:
+                </p>
+                <div class="privacy-highlight-box">
+                    <h4 class="privacy-subheading">What We Log</h4>
+                    <ul class="privacy-list">
+                        <li><strong>Authentication Activity:</strong> Login attempts (successful and failed), registrations, password resets</li>
+                        <li><strong>Security Events:</strong> Suspicious activity, blocked IP addresses, failed validation attempts</li>
+                        <li><strong>Administrative Actions:</strong> Admin logins, user modifications, system changes (with full audit trail)</li>
+                        <li><strong>Crisis Detection:</strong> Flagged messages indicating potential self-harm or crisis (first 100 characters only)</li>
+                        <li><strong>Feedback Security:</strong> Suspicious feedback submissions, spam attempts</li>
+                    </ul>
+
+                    <h4 class="privacy-subheading" style="margin-top: 1rem;">Information in Logs</h4>
+                    <ul class="privacy-list">
+                        <li>Timestamps of events</li>
+                        <li>Usernames (not full names or emails)</li>
+                        <li>Hashed IP addresses (for security events)</li>
+                        <li>Action types (login, logout, password change, etc.)</li>
+                        <li>Success or failure status</li>
+                    </ul>
+
+                    <h4 class="privacy-subheading" style="margin-top: 1rem;">Log Access</h4>
+                    <ul class="privacy-list">
+                        <li>Logs are accessible only to authorized system administrators</li>
+                        <li>All log access is itself logged for accountability</li>
+                        <li>Logs are reviewed only for security incidents or system maintenance</li>
+                        <li>No personally identifiable information is shared from logs</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Feedback System Privacy -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Feedback System Privacy & Security</h3>
+                <div class="privacy-highlight-box">
+                    <p class="privacy-text">
+                        <strong>Feedback submissions are designed to be anonymous while preventing abuse:</strong>
+                    </p>
+                    <ul class="privacy-list">
+                        <li><strong>Anonymous by Design:</strong> No account required to submit feedback</li>
+                        <li><strong>IP Hashing:</strong> Your IP address is hashed using SHA-256 with a unique salt ("snowfriend_feedback_salt_2025") for spam prevention</li>
+                        <li><strong>Original IP Not Stored:</strong> Only the hashed version is kept</li>
+                        <li><strong>Image Processing:</strong> Uploaded images are re-encoded to strip all metadata (EXIF data, location, camera info)</li>
+                        <li><strong>Content Sanitization:</strong> All text is sanitized to remove potentially harmful code</li>
+                        <li><strong>Suspicious Content Flagging:</strong> Messages containing XSS, SQL injection, or other attack patterns are automatically flagged for review</li>
+                        <li><strong>Size Limits:</strong> Images max 5MB, messages max 1000 characters, total request max 10MB</li>
+                        <li><strong>Data Retention:</strong> Feedback is automatically deleted after 90 days (configurable)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Your Rights -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Your Rights & Controls</h3>
+                <p class="privacy-text">You have the right to:</p>
+                <ul class="privacy-list">
+                    <li><strong>View Your Data:</strong> All conversations are visible in your chat interface</li>
+                    <li><strong>Delete Conversations:</strong> Clear your conversation history at any time using the "Clear" button</li>
+                    <li><strong>Delete Memory:</strong> Remove Snowfriend's memory of topics discussed using "Delete Conversations & Memories"</li>
+                    <li><strong>Export Conversations:</strong> Download your conversations as text files (includes both regular messages and media search results)</li>
+                    <li><strong>Change Password:</strong> Update your password at any time (previous 3 passwords cannot be reused)</li>
+                    <li><strong>Close Account:</strong> Contact us to delete your account and all associated data</li>
+                    <li><strong>Review Security Logs:</strong> Request information about security events related to your account</li>
+                </ul>
+            </section>
+
+            <!-- Data Retention -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Data Retention</h3>
+                <p class="privacy-text">
+                    We retain your data as follows:
+                </p>
+                <ul class="privacy-list">
+                    <li><strong>Conversations:</strong> Stored until you manually delete them</li>
+                    <li><strong>Account data:</strong> Retained as long as your account is active</li>
+                    <li><strong>Memory data:</strong> Stored until you clear it or delete your account</li>
+                    <li><strong>Password history:</strong> Last 3 password hashes stored (encrypted) until new passwords replace them</li>
+                    <li><strong>Security logs:</strong> Retained for security analysis and incident investigation (retention period varies by log type)</li>
+                    <li><strong>Failed login attempts:</strong> Cleared after successful login or after lockout period expires</li>
+                    <li><strong>Media search history:</strong> Stored in your user memory until cleared</li>
+                    <li><strong>Feedback submissions:</strong> Automatically deleted after 90 days</li>
+                    <li><strong>Deleted data:</strong> Permanently removed from our database immediately</li>
+                    <li><strong>Backup data:</strong> May persist in backups for up to 30 days before being overwritten</li>
+                </ul>
+            </section>
+
+            <!-- Crisis Logging -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Crisis Detection & Logging</h3>
+                <div class="privacy-highlight-box">
+                    <p class="privacy-text">
+                        <strong>Important Safety Feature:</strong> When Snowfriend detects potential crisis situations 
+                        (such as mentions of self-harm or suicide), the following information is logged:
+                    </p>
+                    <ul class="privacy-list">
+                        <li>Username (not full name or email)</li>
+                        <li>Timestamp of concerning message</li>
+                        <li>Category of concern detected</li>
+                        <li>First 100 characters of the message</li>
+                    </ul>
+                    <p class="privacy-text">
+                        This logging helps us monitor for potential emergencies and improve our crisis detection system. 
+                        Logs are stored securely and reviewed only when necessary for safety purposes.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Cookies and Tracking -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Cookies & Session Management</h3>
+                <p class="privacy-text">
+                    We use essential cookies to:
+                </p>
+                <ul class="privacy-list">
+                    <li>Keep you logged in (session cookies - expire after 1 hour or when browser closes)</li>
+                    <li>Protect against security threats (CSRF tokens)</li>
+                    <li>Remember your authentication state</li>
+                </ul>
+                <div class="privacy-highlight-box" style="margin-top: 1rem;">
+                    <p class="privacy-text">
+                        <strong>Cookie Security Settings:</strong>
+                    </p>
+                    <ul class="privacy-list">
+                        <li><strong>HTTPS Only:</strong> Cookies are only transmitted over secure connections</li>
+                        <li><strong>HTTP Only:</strong> Cookies cannot be accessed by JavaScript</li>
+                        <li><strong>SameSite Strict:</strong> Cookies are not sent with cross-site requests</li>
+                        <li><strong>Session Timeout:</strong> Automatically expire after 1 hour of inactivity</li>
+                        <li><strong>Browser Close:</strong> Session cookies expire when browser is closed</li>
+                    </ul>
+                </div>
+                <p class="privacy-text">
+                    <strong>We do NOT use:</strong>
+                </p>
+                <ul class="privacy-list">
+                    <li>Third-party tracking cookies</li>
+                    <li>Analytics cookies that identify you personally</li>
+                    <li>Advertising cookies</li>
+                    <li>Social media tracking pixels</li>
+                </ul>
+            </section>
+
+            <!-- User Eligibility -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">User Eligibility</h3>
+                <p class="privacy-text">
+                    By creating an account, you confirm that you have the legal capacity to enter into 
+                    this agreement in your jurisdiction. If you are under the age of 18, you should use 
+                    Snowfriend with parental guidance.
+                </p>
+                <p class="privacy-text">
+                    <strong>For Users Under 18:</strong> Please discuss your use of Snowfriend with a 
+                    parent or guardian, especially if you're experiencing difficult emotions or situations.
+                </p>
+            </section>
+
+            <!-- Limitations -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Service Limitations</h3>
+                <div class="privacy-highlight-box">
+                    <p class="privacy-text">
+                        <strong>Please understand:</strong>
+                    </p>
+                    <ul class="privacy-list">
+                        <li>Snowfriend is an AI system, not a licensed therapist or medical professional</li>
+                        <li>Conversations with Snowfriend should not replace professional mental health care</li>
+                        <li>In emergencies, please contact crisis services, call 911, or visit your nearest emergency room</li>
+                        <li>Snowfriend cannot diagnose, treat, or cure any medical or mental health conditions</li>
+                        <li>Media content (videos, images) is sourced from third-party providers and is not endorsed by Snowfriend</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Changes to This Policy -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Changes to This Policy</h3>
+                <p class="privacy-text">
+                    We may update this Privacy Policy from time to time. Significant changes will be 
+                    communicated through:
+                </p>
+                <ul class="privacy-list">
+                    <li>A notice on the website</li>
+                    <li>Updated "Last updated" date at the top of this policy</li>
+                    <li>Email notification for major changes (if you have an account)</li>
+                </ul>
+                <p class="privacy-text">
+                    Continued use of Snowfriend after changes indicates acceptance of the updated policy.
+                </p>
+            </section>
+
+            <!-- Contact Us -->
+            <section class="privacy-section">
+                <h3 class="privacy-heading">Contact Us</h3>
+                <p class="privacy-text">
+                    If you have questions about this Privacy Policy or how we handle your data, 
+                    please contact us:
+                </p>
+                <div class="privacy-contact-box">
+                    <p><strong>Feedback:</strong> <a href="Contact" onclick="transitionToFeedbackModal(); return false;" class="privacy-link">Share your feedback</a></p>
+                    <p><strong>Email:</strong> <a href="https://mail.google.com/mail/?view=cm&fs=1&to=marcdaryll.trinidad@gmail.com&su=Snowfriend%20Privacy%20Inquiry" class="privacy-link" target="_blank" rel="noopener noreferrer">marcdaryll.trinidad@gmail.com</a></p>
+                    <p><strong>Security Concerns:</strong> For security-related inquiries, please email with "SECURITY" in the subject line</p>
+                </div>
+            </section>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="modal-button modal-button-confirm" id="closePrivacyButton">
+                I Understand
+            </button>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="{% static 'css/privacy.css' %}">
+<script src="{% static 'js/privacy.js' %}" defer></script>
