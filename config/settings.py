@@ -293,9 +293,6 @@ DATABASES = {
 
 if not DEBUG:
     DATABASES['default']['CONN_MAX_AGE'] = 600
-    DATABASES['default']['OPTIONS'] = {
-        'connect_timeout': 10,
-    }
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
