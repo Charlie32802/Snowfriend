@@ -268,6 +268,7 @@ ADMIN_URL = 'admin-032802/'
 ADMIN_IP_WHITELIST = [
     '127.0.0.1',
     '::1',
+    '120.28.189.20',
 ]
 
 ADMIN_SESSION_TIMEOUT = 900
