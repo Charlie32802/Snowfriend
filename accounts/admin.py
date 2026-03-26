@@ -74,7 +74,7 @@ class PasswordHistoryAdmin(admin.ModelAdmin):
         return request.user.is_superuser
 
     def user_link(self, obj):
-        url = reverse('admin:auth_user_change', args=[obj.user.id])
+        url = reverse('secure_admin:auth_user_change', args=[obj.user.id])
         return format_html('<a href="{}">{}</a>', url, obj.user.username)
     user_link.short_description = 'User'
     user_link.admin_order_field = 'user__username'
@@ -175,7 +175,7 @@ class PasswordHistoryInline(admin.TabularInline):
             return f"{hours}h ago"
     age.short_description = 'Age'
 
-    def has_add_permission(self, request, obj):
+    def has_add_permission(self, request, obj=None):
         return False
 
     def has_change_permission(self, request, obj=None):
@@ -209,7 +209,7 @@ class CustomUserAdmin(UserAdmin):
         }),
     )
 
-    def get_inlines(self, request, obj):
+    def get_inlines(self, request, obj=None):
         if obj:
             return [PasswordHistoryInline]
         return []
@@ -238,7 +238,7 @@ class CustomUserAdmin(UserAdmin):
     is_active_display.admin_order_field = 'is_active'
 
     def password_age(self, obj):
-        last_change = PasswordHistory.objects.filter(user=obj).first()
+        last_change = PasswordHistory.objects.filter(user=obj).order_by('-created_at').first()
         if last_change:
             age = timezone.now() - last_change.created_at
             days = age.days
@@ -276,7 +276,7 @@ class CustomUserAdmin(UserAdmin):
     account_age_display.short_description = 'Account Age'
 
     def last_password_change(self, obj):
-        last_change = PasswordHistory.objects.filter(user=obj).first()
+        last_change = PasswordHistory.objects.filter(user=obj).order_by('-created_at').first()
         if last_change:
             return last_change.created_at.strftime('%Y-%m-%d %H:%M:%S')
         return "Never changed"
