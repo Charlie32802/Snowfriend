@@ -47,7 +47,7 @@ SESSION_COOKIE_NAME = 'snowfriend_sessionid'
 CSRF_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SAMESITE = 'Strict'
-CSRF_USE_SESSIONS = True
+CSRF_USE_SESSIONS = False
 CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
 CSRF_COOKIE_NAME = 'snowfriend_csrftoken'
 
